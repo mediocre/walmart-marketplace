@@ -51,6 +51,23 @@ test('WalmartMarketplace.authentication.getAccessToken(options)', async (t) => {
             assert.strictEqual(err.message, 'Failed to parse URL from invalid/v3/token');
         }
     });
+
+    await test('should return an error for non 200 status code', async () => {
+        const walmartMarketplace = new WalmartMarketplace({
+            clientId: process.env.CLIENT_ID,
+            clientSecret: process.env.CLIENT_SECRET,
+            url: 'https://httpbin.org/status/500#'
+        });
+
+        try {
+            await walmartMarketplace.authentication.getAccessToken();
+            assert.fail('Expected an error to be thrown');
+        } catch (err) {
+            assert(err);
+            assert.strictEqual(err.cause.status, 500);
+            assert.strictEqual(err.message, 'INTERNAL SERVER ERROR');
+        }
+    });
 });
 
 test('WalmartMarketplace.authentication.getAccessToken(options, callback)', async (t) => {
@@ -102,6 +119,23 @@ test('WalmartMarketplace.authentication.getAccessToken(options, callback)', asyn
         walmartMarketplace.authentication.getAccessToken(function(err, accessToken) {
             assert(err);
             assert.strictEqual(err.message, 'Failed to parse URL from invalid/v3/token');
+            assert.strictEqual(accessToken, null);
+
+            done();
+        });
+    });
+
+    await test('should return an error for non 200 status code', function(t, done) {
+        const walmartMarketplace = new WalmartMarketplace({
+            clientId: process.env.CLIENT_ID,
+            clientSecret: process.env.CLIENT_SECRET,
+            url: 'https://httpbin.org/status/500#'
+        });
+
+        walmartMarketplace.authentication.getAccessToken(function(err, accessToken) {
+            assert(err);
+            assert.strictEqual(err.cause.status, 500);
+            assert.strictEqual(err.message, 'INTERNAL SERVER ERROR');
             assert.strictEqual(accessToken, null);
 
             done();

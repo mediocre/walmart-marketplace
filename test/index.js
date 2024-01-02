@@ -6,139 +6,228 @@ const cache = require('memory-cache');
 
 const WalmartMarketplace = require('../index');
 
-test('WalmartMarketplace.authentication.getAccessToken(options)', async (t) => {
-    t.beforeEach(() => {
-        cache.clear();
-    });
-
-    await test('should support options', async () => {
-        const walmartMarketplace = new WalmartMarketplace({
-            clientId: process.env.CLIENT_ID,
-            clientSecret: process.env.CLIENT_SECRET
+test('WalmartMarketplace.items', async (t) => {
+    await test('WalmartMarketplace.items.retireAnItem(sku, options)', async (t) => {
+        await test('should retire an item', async () => {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+    
+            const response = await walmartMarketplace.items.retireAnItem('123456');
+            assert.strictEqual(response.errors, null);
+            assert.strictEqual(response.sku, '123456');
         });
 
-        const accessToken = await walmartMarketplace.authentication.getAccessToken({ 'WM_QOS.CORRELATION_ID': crypto.randomUUID() });
-        assert(accessToken);
-    });
-
-    await test('should cache the access token', async () => {
-        const walmartMarketplace = new WalmartMarketplace({
-            clientId: process.env.CLIENT_ID,
-            clientSecret: process.env.CLIENT_SECRET
+        await test('should support options', async () => {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+    
+            const response = await walmartMarketplace.items.retireAnItem('123456', { 'WM_QOS.CORRELATION_ID': crypto.randomUUID() });
+            assert.strictEqual(response.errors, null);
+            assert.strictEqual(response.sku, '123456');
         });
 
-        assert.strictEqual(cache.size(), 0);
+        await test('should return an error for non 200 status code', async () => {
+            let walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
 
-        const accessToken1 = await walmartMarketplace.authentication.getAccessToken();
-        assert.strictEqual(cache.size(), 1);
+            // HACK: The following code adds an access token to the cache for a different environment
+            cache.clear();
+            const accessToken = await walmartMarketplace.authentication.getAccessToken();
+            const json = JSON.parse(cache.keys()[0]);
+            json.url = 'https://httpbin.org/status/500#';
+            cache.put(JSON.stringify(json), accessToken);
 
-        const accessToken2 = await walmartMarketplace.authentication.getAccessToken();
-        assert.strictEqual(cache.size(), 1);
+            walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET,
+                url: 'https://httpbin.org/status/500#'
+            });
 
-        assert.deepStrictEqual(accessToken1, accessToken2);
-    });
-
-    await test('should return an error for invalid url', async () => {
-        const walmartMarketplace = new WalmartMarketplace({
-            url: 'invalid'
-        });
-
-        try {
-            await walmartMarketplace.authentication.getAccessToken();
-            assert.fail('Expected an error to be thrown');
-        } catch (err) {
-            assert(err);
-            assert.strictEqual(err.message, 'Failed to parse URL from invalid/v3/token');
-        }
-    });
-
-    await test('should return an error for non 200 status code', async () => {
-        const walmartMarketplace = new WalmartMarketplace({
-            clientId: process.env.CLIENT_ID,
-            clientSecret: process.env.CLIENT_SECRET,
-            url: 'https://httpbin.org/status/500#'
-        });
-
-        try {
-            await walmartMarketplace.authentication.getAccessToken();
-            assert.fail('Expected an error to be thrown');
-        } catch (err) {
-            assert(err);
-            assert.strictEqual(err.cause.status, 500);
-            assert.strictEqual(err.message, 'INTERNAL SERVER ERROR');
-        }
-    });
-});
-
-test('WalmartMarketplace.authentication.getAccessToken(options, callback)', async (t) => {
-    t.beforeEach(() => {
-        cache.clear();
-    });
-
-    await test('should support options', function(t, done) {
-        const walmartMarketplace = new WalmartMarketplace({
-            clientId: process.env.CLIENT_ID,
-            clientSecret: process.env.CLIENT_SECRET
-        });
-
-        walmartMarketplace.authentication.getAccessToken({ 'WM_QOS.CORRELATION_ID': crypto.randomUUID() }, function(err, accessToken) {
-            assert.ifError(err);
-            assert(accessToken);
-            
-            done();
+            try {
+                await walmartMarketplace.items.retireAnItem('123456');
+                assert.fail('Expected an error to be thrown');
+            } catch (err) {
+                assert(err);
+                assert.strictEqual(err.cause.status, 500);
+                assert.strictEqual(err.message, 'INTERNAL SERVER ERROR');
+            }
         });
     });
 
-    await test('should cache the access token', function(t, done) {
-        const walmartMarketplace = new WalmartMarketplace({
-            clientId: process.env.CLIENT_ID,
-            clientSecret: process.env.CLIENT_SECRET
-        });
-
-        assert.strictEqual(cache.size(), 0);
-
-        walmartMarketplace.authentication.getAccessToken(function(err, accessToken1) {
-            assert.ifError(err);
-            assert.strictEqual(cache.size(), 1);
-
-            walmartMarketplace.authentication.getAccessToken(function(err, accessToken2) {
+    await test('WalmartMarketplace.items.retireAnItem(sku, options, callback)', async (t) => {
+        await test('should retire an item', function(t, done) {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+    
+            walmartMarketplace.items.retireAnItem('123456', function(err, response) {
                 assert.ifError(err);
-                assert.strictEqual(cache.size(), 1);
-                assert.deepStrictEqual(accessToken1, accessToken2);
+                assert.strictEqual(response.errors, null);
+                assert.strictEqual(response.sku, '123456');
+                
+                done();
+            });
+        });
 
+        await test('should support options', function(t, done) {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+    
+            walmartMarketplace.items.retireAnItem('123456', { 'WM_QOS.CORRELATION_ID': crypto.randomUUID() }, function(err, response) {
+                assert.ifError(err);
+                assert.strictEqual(response.errors, null);
+                assert.strictEqual(response.sku, '123456');
+                
                 done();
             });
         });
     });
+});
 
-    await test('should return an error for invalid url', function(t, done) {
-        const walmartMarketplace = new WalmartMarketplace({
-            url: 'invalid'
+test('WalmartMarketplace.authentication', async (t) => {
+    await test('WalmartMarketplace.authentication.getAccessToken(options)', async (t) => {
+        t.beforeEach(() => {
+            cache.clear();
         });
-
-        walmartMarketplace.authentication.getAccessToken(function(err, accessToken) {
-            assert(err);
-            assert.strictEqual(err.message, 'Failed to parse URL from invalid/v3/token');
-            assert.strictEqual(accessToken, null);
-
-            done();
+    
+        await test('should support options', async () => {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+    
+            const accessToken = await walmartMarketplace.authentication.getAccessToken({ 'WM_QOS.CORRELATION_ID': crypto.randomUUID() });
+            assert(accessToken);
+        });
+    
+        await test('should cache the access token', async () => {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+    
+            assert.strictEqual(cache.size(), 0);
+    
+            const accessToken1 = await walmartMarketplace.authentication.getAccessToken();
+            assert.strictEqual(cache.size(), 1);
+    
+            const accessToken2 = await walmartMarketplace.authentication.getAccessToken();
+            assert.strictEqual(cache.size(), 1);
+    
+            assert.deepStrictEqual(accessToken1, accessToken2);
+        });
+    
+        await test('should return an error for invalid url', async () => {
+            const walmartMarketplace = new WalmartMarketplace({
+                url: 'invalid'
+            });
+    
+            try {
+                await walmartMarketplace.authentication.getAccessToken();
+                assert.fail('Expected an error to be thrown');
+            } catch (err) {
+                assert(err);
+                assert.strictEqual(err.message, 'Failed to parse URL from invalid/v3/token');
+            }
+        });
+    
+        await test('should return an error for non 200 status code', async () => {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET,
+                url: 'https://httpbin.org/status/500#'
+            });
+    
+            try {
+                await walmartMarketplace.authentication.getAccessToken();
+                assert.fail('Expected an error to be thrown');
+            } catch (err) {
+                assert(err);
+                assert.strictEqual(err.cause.status, 500);
+                assert.strictEqual(err.message, 'INTERNAL SERVER ERROR');
+            }
         });
     });
 
-    await test('should return an error for non 200 status code', function(t, done) {
-        const walmartMarketplace = new WalmartMarketplace({
-            clientId: process.env.CLIENT_ID,
-            clientSecret: process.env.CLIENT_SECRET,
-            url: 'https://httpbin.org/status/500#'
+    await test('WalmartMarketplace.authentication.getAccessToken(options, callback)', async (t) => {
+        t.beforeEach(() => {
+            cache.clear();
         });
-
-        walmartMarketplace.authentication.getAccessToken(function(err, accessToken) {
-            assert(err);
-            assert.strictEqual(err.cause.status, 500);
-            assert.strictEqual(err.message, 'INTERNAL SERVER ERROR');
-            assert.strictEqual(accessToken, null);
-
-            done();
+    
+        await test('should support options', function(t, done) {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+    
+            walmartMarketplace.authentication.getAccessToken({ 'WM_QOS.CORRELATION_ID': crypto.randomUUID() }, function(err, accessToken) {
+                assert.ifError(err);
+                assert(accessToken);
+                
+                done();
+            });
+        });
+    
+        await test('should cache the access token', function(t, done) {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+    
+            assert.strictEqual(cache.size(), 0);
+    
+            walmartMarketplace.authentication.getAccessToken(function(err, accessToken1) {
+                assert.ifError(err);
+                assert.strictEqual(cache.size(), 1);
+    
+                walmartMarketplace.authentication.getAccessToken(function(err, accessToken2) {
+                    assert.ifError(err);
+                    assert.strictEqual(cache.size(), 1);
+                    assert.deepStrictEqual(accessToken1, accessToken2);
+    
+                    done();
+                });
+            });
+        });
+    
+        await test('should return an error for invalid url', function(t, done) {
+            const walmartMarketplace = new WalmartMarketplace({
+                url: 'invalid'
+            });
+    
+            walmartMarketplace.authentication.getAccessToken(function(err, accessToken) {
+                assert(err);
+                assert.strictEqual(err.message, 'Failed to parse URL from invalid/v3/token');
+                assert.strictEqual(accessToken, null);
+    
+                done();
+            });
+        });
+    
+        await test('should return an error for non 200 status code', function(t, done) {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET,
+                url: 'https://httpbin.org/status/500#'
+            });
+    
+            walmartMarketplace.authentication.getAccessToken(function(err, accessToken) {
+                assert(err);
+                assert.strictEqual(err.cause.status, 500);
+                assert.strictEqual(err.message, 'INTERNAL SERVER ERROR');
+                assert.strictEqual(accessToken, null);
+    
+                done();
+            });
         });
     });
 });

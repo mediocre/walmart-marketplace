@@ -30,6 +30,8 @@ function WalmartMarketplace(args) {
         'WM_SVC.NAME': 'Walmart Marketplace'
     }, args);
 
+    const _this = this;
+
     this.authentication = {
         /**
          * The Walmart Marketplace APIs use OAuth for token-based authentication and authorization.
@@ -88,6 +90,47 @@ function WalmartMarketplace(args) {
                 cache.put(cacheKey, accessToken, accessToken.expires_in * 1000 / 2);
 
                 return finalize(null, accessToken, callback);
+            } catch(err) {
+                return finalize(err, null, callback);
+            }
+        }
+    };
+
+    this.items = {
+        /**
+         * Completely deactivates and un-publishes an item from the site.
+         * @see https://developer.walmart.com/api/us/mp/items#operation/retireAnItem
+         * @param {String} sku An arbitrary alphanumeric unique ID, specified by the seller, which identifies each item.
+         * @param {Object} [options]
+         * @param {String} [options['WM_QOS.CORRELATION_ID']] A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+         */
+        retireAnItem: async function(sku, options, callback) {
+            try {
+                // Options are optional
+                if (!options) {
+                    options = {};
+                } else if (typeof options === 'function') {
+                    callback = options;
+                    options = {};
+                }
+
+                const url = `${_options.url}/v3/items/${sku}`;
+
+                const response = await fetch(url, {
+                    headers: {
+                        Accept: 'application/json',
+                        'WM_QOS.CORRELATION_ID': options['WM_QOS.CORRELATION_ID'] || crypto.randomUUID(),
+                        'WM_SEC.ACCESS_TOKEN': (await _this.authentication.getAccessToken()).access_token,
+                        'WM_SVC.NAME': _options['WM_SVC.NAME']
+                    },
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(response.statusText, { cause: response });
+                }
+
+                return finalize(null, await response.json(), callback);
             } catch(err) {
                 return finalize(err, null, callback);
             }

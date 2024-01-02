@@ -1,0 +1,19 @@
+{
+    "dependencies": {
+        "memory-cache": "~0.2.0"
+    },
+    "devDependencies": {
+        "coveralls": "*",
+        "nyc": "*"
+    },
+    "name": "walmart-marketplace",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mediocre/walmart-marketplace.git"
+    },
+    "scripts": {
+        "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
+        "test": "node --test"
+    },
+    "version": "0.0.1"
+}

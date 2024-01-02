@@ -1,0 +1,5 @@
+.coveralls.yml
+.eslintrc.js
+.github
+coverage
+test

@@ -7,3 +7,15 @@
 The Walmart Marketplace APIs provide resources for sellers to manage their items, orders, prices, promotions, inventory and reports on Walmart.com.
 
 https://developer.walmart.com/home/us-mp/
+
+## Usage
+
+```javascript
+const WalmartMarketplace = require('walmart-marketplace');
+
+const walmartMarketplace = new WalmartMarketplace({
+    clientId: 'your_api_key',
+    clientSecret: 'your_api_secret',
+    url: 'https://marketplace.walmartapis.com'
+});
+```

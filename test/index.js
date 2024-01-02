@@ -10,34 +10,6 @@ test('WalmartMarketplace.authentication.getAccessToken', async (t) => {
         cache.clear();
     });
 
-    await test('should return an error for invalid url', async () => {
-        const walmartMarketplace = new WalmartMarketplace({
-            url: 'invalid'
-        });
-
-        try {
-            await walmartMarketplace.authentication.getAccessToken();
-            assert.fail('Expected an error to be thrown');
-        } catch (err) {
-            assert(err);
-            assert.strictEqual(err.message, 'Failed to parse URL from invalid/v3/token');
-        }
-    });
-
-    await test('should return an error for invalid url', function(t, done) {
-        const walmartMarketplace = new WalmartMarketplace({
-            url: 'invalid'
-        });
-
-        walmartMarketplace.authentication.getAccessToken(function(err, accessToken) {
-            assert(err);
-            assert.strictEqual(err.message, 'Failed to parse URL from invalid/v3/token');
-            assert.strictEqual(accessToken, null);
-
-            done();
-        });
-    });
-
     await test('should cache the access token', async () => {
         const walmartMarketplace = new WalmartMarketplace({
             clientId: process.env.CLIENT_ID,
@@ -74,6 +46,34 @@ test('WalmartMarketplace.authentication.getAccessToken', async (t) => {
 
                 done();
             });
+        });
+    });
+
+    await test('should return an error for invalid url', async () => {
+        const walmartMarketplace = new WalmartMarketplace({
+            url: 'invalid'
+        });
+
+        try {
+            await walmartMarketplace.authentication.getAccessToken();
+            assert.fail('Expected an error to be thrown');
+        } catch (err) {
+            assert(err);
+            assert.strictEqual(err.message, 'Failed to parse URL from invalid/v3/token');
+        }
+    });
+
+    await test('should return an error for invalid url', function(t, done) {
+        const walmartMarketplace = new WalmartMarketplace({
+            url: 'invalid'
+        });
+
+        walmartMarketplace.authentication.getAccessToken(function(err, accessToken) {
+            assert(err);
+            assert.strictEqual(err.message, 'Failed to parse URL from invalid/v3/token');
+            assert.strictEqual(accessToken, null);
+
+            done();
         });
     });
 });

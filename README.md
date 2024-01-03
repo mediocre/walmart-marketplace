@@ -28,15 +28,15 @@ https://developer.walmart.com/api/us/mp/auth
 
 **Promise Example**
 ```javascript
-walmartMarketplace.authentication.getAccessToken(function(err, accessToken) {
-    console.log(accessToken);
-});
+const accessToken = await walmartMarketplace.authentication.getAccessToken();
+console.log(accessToken);
 ```
 
 **Callback Example**
 ```javascript
-const accessToken = await walmartMarketplace.authentication.getAccessToken();
-console.log(accessToken);
+walmartMarketplace.authentication.getAccessToken(function(err, accessToken) {
+    console.log(accessToken);
+});
 ```
 
 **Options**

@@ -20,7 +20,7 @@ const walmartMarketplace = new WalmartMarketplace({
 });
 ```
 
-### walmartMarketplace.authentication.getAccessToken([options])
+## walmartMarketplace.authentication.getAccessToken([options])
 
 Get access token by providing Client ID and Client Secret.
 

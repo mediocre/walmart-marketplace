@@ -18,6 +18,29 @@ test('WalmartMarketplace.items', async (t) => {
             cache.clear();
             const accessToken = await walmartMarketplace.authentication.getAccessToken();
             const json = JSON.parse(cache.keys()[0]);
+            json.url = 'https://httpbin.org/json#';
+            cache.put(JSON.stringify(json), accessToken);
+
+            walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET,
+                url: 'https://httpbin.org/json#'
+            });
+
+            const itemDetails = await walmartMarketplace.items.getAnItem('30348_KFTest', { condition: 'New' });
+            assert(itemDetails);
+        });
+
+        await test('should return an error for non 200 status code', async () => {
+            let walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            // HACK: The following code adds an access token to the cache for a different environment
+            cache.clear();
+            const accessToken = await walmartMarketplace.authentication.getAccessToken();
+            const json = JSON.parse(cache.keys()[0]);
             json.url = 'https://httpbin.org/status/500#';
             cache.put(JSON.stringify(json), accessToken);
 

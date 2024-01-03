@@ -61,6 +61,24 @@ test('WalmartMarketplace.items', async (t) => {
         });
     });
 
+    await test('WalmartMarketplace.items.getAnItem(id, options, callback)', async (t) => {
+        await test('should return an error for non 200 status code', function(t, done) {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            walmartMarketplace.items.getAnItem('30348_KFTest', function(err, itemDetails) {
+                // HACK: In the sandbox environment, this endpoint always seems to return a 404
+                assert(err);
+                assert.strictEqual(err.cause.status, 404);
+                assert.strictEqual(err.message, 'Not Found');
+                assert.strictEqual(itemDetails, null);
+                done();
+            });
+        });
+    });
+
     await test('WalmartMarketplace.items.retireAnItem(sku, options)', async (t) => {
         await test('should retire an item', async () => {
             const walmartMarketplace = new WalmartMarketplace({

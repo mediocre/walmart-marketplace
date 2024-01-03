@@ -11,7 +11,7 @@ https://developer.walmart.com/home/us-mp/
 ## Usage
 
 ```javascript
-const WalmartMarketplace = require('walmart-marketplace');
+const WalmartMarketplace = require('@mediocre/walmart-marketplace');
 
 const walmartMarketplace = new WalmartMarketplace({
     clientId: 'your_api_key',

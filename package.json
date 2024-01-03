@@ -6,7 +6,7 @@
         "coveralls": "*",
         "nyc": "*"
     },
-    "name": "walmart-marketplace",
+    "name": "@mediocre/walmart-marketplace",
     "repository": {
         "type": "git",
         "url": "https://github.com/mediocre/walmart-marketplace.git"

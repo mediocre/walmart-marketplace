@@ -45,3 +45,29 @@ walmartMarketplace.authentication.getAccessToken(function(err, accessToken) {
     'WM_QOS.CORRELATION_ID': '00000000-0000-0000-0000-000000000000' // A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
 }
 ```
+
+## walmartMarketplace.items.retireAnItem(sku, [options])
+
+Completely deactivates and un-publishes an item from the site.
+
+https://developer.walmart.com/api/us/mp/items#operation/retireAnItem
+
+**Promise Example**
+```javascript
+const response = await walmartMarketplace.items.retireAnItem('abc123');
+console.log(response);
+```
+
+**Callback Example**
+```javascript
+walmartMarketplace.items.retireAnItem(function(err, response) {
+    console.log(response);
+});
+```
+
+**Options**
+```
+{
+    'WM_QOS.CORRELATION_ID': '00000000-0000-0000-0000-000000000000' // A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+}
+```

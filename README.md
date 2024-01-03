@@ -55,6 +55,42 @@ walmartMarketplace.authentication.getAccessToken(function(err, accessToken) {
 }
 ```
 
+## walmartMarketplace.items.getAnItem(id, [options])
+
+Completely deactivates and un-publishes an item from the site.
+
+https://developer.walmart.com/api/us/mp/items#operation/retireAnItem
+
+**Promise Example**
+```javascript
+const response = await walmartMarketplace.items.retireAnItem('97964_KFTest');
+console.log(response);
+```
+
+**Callback Example**
+```javascript
+walmartMarketplace.items.retireAnItem('97964_KFTest', function(err, response) {
+    console.log(response);
+});
+```
+
+**Options**
+```
+{
+    'WM_QOS.CORRELATION_ID': '00000000-0000-0000-0000-000000000000' // A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+}
+```
+
+**Returns**
+```
+{
+    "sku": "97964_KFTest",
+    "message": "Thank you.  Your item has been submitted for retirement from Walmart Catalog.  Please note that it can take up to 48 hours for items to be retired from our catalog.",
+    "additionalAttributes": null,
+    "errors": null
+}
+```
+
 ## walmartMarketplace.items.retireAnItem(sku, [options])
 
 Completely deactivates and un-publishes an item from the site.

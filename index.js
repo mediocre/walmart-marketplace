@@ -98,6 +98,53 @@ function WalmartMarketplace(args) {
 
     this.items = {
         /**
+         * Retrieves an item and displays the item details.
+         * @see https://developer.walmart.com/api/us/mp/items#operation/getAnItem
+         * @param {String} id Represents the seller-specified unique ID for each item. Takes SKU code by default. If you require more specific item codes, such as GTIN, UPC, ISBN, EAN, or ITEM_ID, you need to use the productIdType query parameter and specify the desired code e.g. productIdType=GTIN.
+         * @param {Object} [options]
+         * @param {String} [options.condition] The value of product condition, (e.g. New).
+         * @param {String} [options.productIdType] Item code type specifier allows to filter by specific code type, (e.g. GTIN).
+         * @param {String} [options['WM_QOS.CORRELATION_ID']] A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+         */
+        getAnItem: async function(id, options, callback) {
+            try {
+                // Options are optional
+                if (!options) {
+                    options = {};
+                } else if (typeof options === 'function') {
+                    callback = options;
+                    options = {};
+                }
+
+                const queryParameters = new URLSearchParams();
+
+                ['condition', 'productIdType'].forEach(key => {
+                    if (Object.hasOwn(options, key)) {
+                        queryParameters.set(key, options[key]);
+                    }
+                });
+
+                const url = `${_options.url}/v3/items/${id}?${queryParameters.toString()}`;
+
+                const response = await fetch(url, {
+                    headers: {
+                        Accept: 'application/json',
+                        'WM_QOS.CORRELATION_ID': options['WM_QOS.CORRELATION_ID'] || crypto.randomUUID(),
+                        'WM_SEC.ACCESS_TOKEN': (await _this.authentication.getAccessToken()).access_token,
+                        'WM_SVC.NAME': _options['WM_SVC.NAME']
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(response.statusText, { cause: response });
+                }
+
+                return finalize(null, await response.json(), callback);
+            } catch(err) {
+                return finalize(err, null, callback);
+            }
+        },
+        /**
          * Completely deactivates and un-publishes an item from the site.
          * @see https://developer.walmart.com/api/us/mp/items#operation/retireAnItem
          * @param {String} sku An arbitrary alphanumeric unique ID, specified by the seller, which identifies each item.

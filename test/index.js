@@ -8,7 +8,7 @@ const WalmartMarketplace = require('../index');
 
 test('WalmartMarketplace.items', async (t) => {
     await test('WalmartMarketplace.items.getAnItem(id, options)', async (t) => {
-        await test('should return an error for non 200 status code', async () => {
+        await test('should return json', async () => {
             let walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET

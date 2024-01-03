@@ -31,12 +31,26 @@ https://developer.walmart.com/api/us/mp/auth
 const accessToken = await walmartMarketplace.authentication.getAccessToken();
 console.log(accessToken);
 ```
+```
+{
+    "access_token": "eyJraWQiOiI1MWY3MjM0Ny0wYWY5LTRhZ.....",
+    "token_type": "Bearer",
+    "expires_in": 900
+}
+```
 
 **Callback Example**
 ```javascript
 walmartMarketplace.authentication.getAccessToken(function(err, accessToken) {
     console.log(accessToken);
 });
+```
+```
+{
+    "access_token": "eyJraWQiOiI1MWY3MjM0Ny0wYWY5LTRhZ.....",
+    "token_type": "Bearer",
+    "expires_in": 900
+}
 ```
 
 **Options**
@@ -54,15 +68,31 @@ https://developer.walmart.com/api/us/mp/items#operation/retireAnItem
 
 **Promise Example**
 ```javascript
-const response = await walmartMarketplace.items.retireAnItem('abc123');
+const response = await walmartMarketplace.items.retireAnItem('97964_KFTest');
 console.log(response);
+```
+```
+{
+    "sku": "97964_KFTest",
+    "message": "Thank you.  Your item has been submitted for retirement from Walmart Catalog.  Please note that it can take up to 48 hours for items to be retired from our catalog.",
+    "additionalAttributes": null,
+    "errors": null
+}
 ```
 
 **Callback Example**
 ```javascript
-walmartMarketplace.items.retireAnItem(function(err, response) {
+walmartMarketplace.items.retireAnItem('97964_KFTest', function(err, response) {
     console.log(response);
 });
+```
+```
+{
+    "sku": "97964_KFTest",
+    "message": "Thank you.  Your item has been submitted for retirement from Walmart Catalog.  Please note that it can take up to 48 hours for items to be retired from our catalog.",
+    "additionalAttributes": null,
+    "errors": null
+}
 ```
 
 **Options**

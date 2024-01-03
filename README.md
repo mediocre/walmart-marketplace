@@ -19,3 +19,29 @@ const walmartMarketplace = new WalmartMarketplace({
     url: 'https://marketplace.walmartapis.com'
 });
 ```
+
+### walmartMarketplace.authentication.getAccessToken([options], [callback])
+
+Get access token by providing Client ID and Client Secret.
+
+https://developer.walmart.com/api/us/mp/auth
+
+**Promise Example**
+```javascript
+walmartMarketplace.authentication.getAccessToken(function(err, accessToken) {
+    console.log(accessToken);
+});
+```
+
+**Callback Example**
+```javascript
+const accessToken = await walmartMarketplace.authentication.getAccessToken();
+console.log(accessToken);
+```
+
+**Options**
+```
+{
+    'WM_QOS.CORRELATION_ID': '00000000-0000-0000-0000-000000000000' // A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+}
+```

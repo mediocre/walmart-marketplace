@@ -55,6 +55,79 @@ walmartMarketplace.authentication.getAccessToken(function(err, accessToken) {
 }
 ```
 
+## walmartMarketplace.items.bulkItemSetup(feedType, file, [options])
+
+Use this API for initial item setup and maintenance.
+
+https://developer.walmart.com/api/us/mp/items#operation/itemBulkUploads
+
+**Promise Example**
+```javascript
+const mpItemMatch = {
+    MPItemFeedHeader: {
+        locale: 'en',
+        sellingChannel: 'mpsetupbymatch',
+        version: '4.2'
+    },
+    MPItem: [{
+        Item: {
+            condition: 'New',
+            price: 123,
+            productIdentifiers: {
+                productId: '123456789012',
+                productIdType: 'UPC'
+            },
+            ShippingWeight: 1,
+            sku: '123abc'
+        }
+    }]
+};
+
+const response = await walmartMarketplace.items.bulkItemSetup('MP_ITEM_MATCH', mpItemMatch);
+console.log(response);
+```
+
+**Callback Example**
+```javascript
+const mpItemMatch = {
+    MPItemFeedHeader: {
+        locale: 'en',
+        sellingChannel: 'mpsetupbymatch',
+        version: '4.2'
+    },
+    MPItem: [{
+        Item: {
+            condition: 'New',
+            price: 123,
+            productIdentifiers: {
+                productId: '123456789012',
+                productIdType: 'UPC'
+            },
+            ShippingWeight: 1,
+            sku: '123abc'
+        }
+    }]
+};
+
+walmartMarketplace.items.bulkItemSetup('MP_ITEM_MATCH', mpItemMatch, function(err, response) {
+    console.log(response);
+});
+```
+
+**Options**
+```
+{
+    'WM_QOS.CORRELATION_ID': '00000000-0000-0000-0000-000000000000' // A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+}
+```
+
+**Returns**
+```
+{
+    "feedId": "F129C19240844B97A3C6AD8F1A2C4997@AU8BAQA"
+}
+```
+
 ## walmartMarketplace.items.getAnItem(id, [options])
 
 Retrieves an item and displays the item details.
@@ -64,7 +137,7 @@ https://developer.walmart.com/api/us/mp/items#operation/getAnItem
 **Promise Example**
 ```javascript
 const itemDetails = await walmartMarketplace.items.getAnItem('97964_KFTest');
-console.log(response);
+console.log(itemDetails);
 ```
 
 **Callback Example**

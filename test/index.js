@@ -51,7 +51,7 @@ test('WalmartMarketplace.items', async (t) => {
             assert(response);
         });
 
-        await test('should support options', async () => {
+        await test('should throw error for non 200 status code', async () => {
             let walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET
@@ -61,13 +61,13 @@ test('WalmartMarketplace.items', async (t) => {
             cache.clear();
             const accessToken = await walmartMarketplace.authentication.getAccessToken();
             const json = JSON.parse(cache.keys()[0]);
-            json.url = 'https://httpbin.org/post#';
+            json.url = 'https://httpbin.org/status/500#';
             cache.put(JSON.stringify(json), accessToken);
 
             walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET,
-                url: 'https://httpbin.org/post#'
+                url: 'https://httpbin.org/status/500#'
             });
 
             const mpItemMatch = {
@@ -90,8 +90,14 @@ test('WalmartMarketplace.items', async (t) => {
                 }]
             };
 
-            const response = await walmartMarketplace.items.bulkItemSetup('MP_ITEM_MATCH', mpItemMatch, { 'WM_QOS.CORRELATION_ID': crypto.randomUUID() });
-            assert(response);
+            try {
+                await walmartMarketplace.items.bulkItemSetup('MP_ITEM_MATCH', mpItemMatch, { 'WM_QOS.CORRELATION_ID': crypto.randomUUID() });
+                assert.fail('Expected an error to be thrown');
+            } catch (err) {
+                assert(err);
+                assert.strictEqual(err.cause.status, 500);
+                assert.strictEqual(err.message, 'INTERNAL SERVER ERROR');
+            }
         });
     });
     

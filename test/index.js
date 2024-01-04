@@ -9,9 +9,22 @@ const WalmartMarketplace = require('../index');
 test('WalmartMarketplace.items', async (t) => {
     await test('WalmartMarketplace.items.bulkItemSetup(feedType, file, options)', async (t) => {
         await test('should return json', async () => {
-            const walmartMarketplace = new WalmartMarketplace({
+            let walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET
+            });
+
+            // HACK: The following code adds an access token to the cache for a different environment
+            cache.clear();
+            const accessToken = await walmartMarketplace.authentication.getAccessToken();
+            const json = JSON.parse(cache.keys()[0]);
+            json.url = 'https://httpbin.org/post#';
+            cache.put(JSON.stringify(json), accessToken);
+
+            walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET,
+                url: 'https://httpbin.org/post#'
             });
 
             const mpItemMatch = {
@@ -36,7 +49,49 @@ test('WalmartMarketplace.items', async (t) => {
 
             const response = await walmartMarketplace.items.bulkItemSetup('MP_ITEM_MATCH', mpItemMatch);
             assert(response);
-            assert(response.feedId);
+        });
+
+        await test('should support options', async () => {
+            let walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            // HACK: The following code adds an access token to the cache for a different environment
+            cache.clear();
+            const accessToken = await walmartMarketplace.authentication.getAccessToken();
+            const json = JSON.parse(cache.keys()[0]);
+            json.url = 'https://httpbin.org/post#';
+            cache.put(JSON.stringify(json), accessToken);
+
+            walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET,
+                url: 'https://httpbin.org/post#'
+            });
+
+            const mpItemMatch = {
+                MPItemFeedHeader: {
+                    locale: 'en',
+                    sellingChannel: 'mpsetupbymatch',
+                    version: '4.2'
+                },
+                MPItem: [{
+                    Item: {
+                        condition: 'New',
+                        price: 123,
+                        productIdentifiers: {
+                            productId: '123456789012',
+                            productIdType: 'UPC'
+                        },
+                        ShippingWeight: 1,
+                        sku: '123abc'
+                    }
+                }]
+            };
+
+            const response = await walmartMarketplace.items.bulkItemSetup('MP_ITEM_MATCH', mpItemMatch, { 'WM_QOS.CORRELATION_ID': crypto.randomUUID() });
+            assert(response);
         });
     });
     

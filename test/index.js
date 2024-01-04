@@ -7,6 +7,39 @@ const cache = require('memory-cache');
 const WalmartMarketplace = require('../index');
 
 test('WalmartMarketplace.items', async (t) => {
+    await test('WalmartMarketplace.items.bulkItemSetup(feedType, file, options)', async (t) => {
+        await test('should return json', async () => {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            const mpItemMatch = {
+                MPItemFeedHeader: {
+                    locale: 'en',
+                    sellingChannel: 'mpsetupbymatch',
+                    version: '4.2'
+                },
+                MPItem: [{
+                    Item: {
+                        condition: 'New',
+                        price: 123,
+                        productIdentifiers: {
+                            productId: '123456789012',
+                            productIdType: 'UPC'
+                        },
+                        ShippingWeight: 1,
+                        sku: '123abc'
+                    }
+                }]
+            };
+
+            const response = await walmartMarketplace.items.bulkItemSetup('MP_ITEM_MATCH', mpItemMatch);
+            assert(response);
+            assert(response.feedId);
+        });
+    });
+    
     await test('WalmartMarketplace.items.getAnItem(id, options)', async (t) => {
         await test('should return json', async () => {
             let walmartMarketplace = new WalmartMarketplace({

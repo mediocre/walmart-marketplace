@@ -98,6 +98,48 @@ function WalmartMarketplace(args) {
 
     this.items = {
         /**
+         * Use this API for initial item setup and maintenance.
+         * @see https://developer.walmart.com/api/us/mp/items#operation/itemBulkUploads
+         * @param {String} feedType The feed Type. Enum: "item" "RETIRE_ITEM" "MP_ITEM" "MP_WFS_ITEM" "MP_ITEM_MATCH" "MP_MAINTENANCE" "SKU_TEMPLATE_MAP" "SHIPPING_OVERRIDES" "OMNI_WFS" "FITMENT_ACES" "FITMENT_PIES".
+         * @param {Object} file The request body consists of a Feed file attached to the request based on the feedType selected.
+         * @param {Object} [options]
+         * @param {String} [options['WM_QOS.CORRELATION_ID']] A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+         */
+        bulkItemSetup: async function(feedType, file, options, callback) {
+            try {
+                // Options are optional
+                if (!options) {
+                    options = {};
+                } else if (typeof options === 'function') {
+                    callback = options;
+                    options = {};
+                }
+
+                const queryParameters = new URLSearchParams({ feedType });
+                const url = `${_options.url}/v3/feeds?${queryParameters.toString()}`;
+
+                const response = await fetch(url, {
+                    body: JSON.stringify(file),
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        'WM_QOS.CORRELATION_ID': options['WM_QOS.CORRELATION_ID'] || crypto.randomUUID(),
+                        'WM_SEC.ACCESS_TOKEN': (await _this.authentication.getAccessToken()).access_token,
+                        'WM_SVC.NAME': _options['WM_SVC.NAME']
+                    },
+                    method: 'POST'
+                });
+
+                if (!response.ok) {
+                    throw new Error(response.statusText, { cause: response });
+                }
+
+                return finalize(null, await response.json(), callback);
+            } catch(err) {
+                return finalize(err, null, callback);
+            }
+        },
+        /**
          * Retrieves an item and displays the item details.
          * @see https://developer.walmart.com/api/us/mp/items#operation/getAnItem
          * @param {String} id Represents the seller-specified unique ID for each item. Takes SKU code by default. If you require more specific item codes, such as GTIN, UPC, ISBN, EAN, or ITEM_ID, you need to use the productIdType query parameter and specify the desired code e.g. productIdType=GTIN.

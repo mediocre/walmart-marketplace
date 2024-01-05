@@ -225,6 +225,49 @@ function WalmartMarketplace(args) {
             }
         }
     };
+
+    this.prices = {
+        /**
+         * Updates the regular price for a given item.
+         * @see https://developer.walmart.com/api/us/mp/price#operation/updatePrice
+         * @param {Object} price 
+         * @param {Object} [options]
+         * @param {String} [options['WM_QOS.CORRELATION_ID']] A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+         */
+        updatePrice: async function(price, options, callback) {
+            try {
+                // Options are optional
+                if (!options) {
+                    options = {};
+                } else if (typeof options === 'function') {
+                    callback = options;
+                    options = {};
+                }
+
+                const url = `${_options.url}/v3/price`;
+
+                const response = await fetch(url, {
+                    body: JSON.stringify(price),
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        'WM_QOS.CORRELATION_ID': options['WM_QOS.CORRELATION_ID'] || crypto.randomUUID(),
+                        'WM_SEC.ACCESS_TOKEN': (await _this.authentication.getAccessToken()).access_token,
+                        'WM_SVC.NAME': _options['WM_SVC.NAME']
+                    },
+                    method: 'PUT'
+                });
+
+                if (!response.ok) {
+                    throw new Error(response.statusText, { cause: response });
+                }
+
+                return finalize(null, await response.json(), callback);
+            } catch(err) {
+                return finalize(err, null, callback);
+            }
+        }
+    };
 }
 
 module.exports = WalmartMarketplace;

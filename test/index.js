@@ -292,6 +292,34 @@ test('WalmartMarketplace.items', async (t) => {
     });
 });
 
+test('WalmartMarketplace.prices', async (t) => {
+    await test('WalmartMarketplace.prices.updatePrice(price, options)', async (t) => {
+        await test('should return json', async () => {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            const price = {
+                pricing: [
+                    {
+                        currentPrice: {
+                            amount: 12.34,
+                            currency: 'USD'
+                        },
+                        currentPriceType: 'BASE'
+                    }
+                ],
+                sku: '97964_KFTest'
+            };
+
+            const response = await walmartMarketplace.prices.updatePrice(price);
+            assert(response);
+            assert.strictEqual(response.ItemPriceResponse.sku, '97964_KFTest');
+        });
+    });
+});
+
 test('WalmartMarketplace.authentication', async (t) => {
     await test('WalmartMarketplace.authentication.getAccessToken(options)', async (t) => {
         t.beforeEach(() => {

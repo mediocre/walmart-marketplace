@@ -217,3 +217,66 @@ walmartMarketplace.items.retireAnItem('97964_KFTest', function(err, response) {
     "errors": null
 }
 ```
+
+# walmartMarketplace.prices.updatePrice(price, [options])
+
+Updates the regular price for a given item.
+
+https://developer.walmart.com/api/us/mp/price#operation/updatePrice
+
+**Promise Example**
+```javascript
+const price = {
+    pricing: [
+        {
+            currentPrice: {
+                amount: 12.34,
+                currency: 'USD'
+            },
+            currentPriceType: 'BASE'
+        }
+    ],
+    sku: '97964_KFTest'
+};
+
+const response = await walmartMarketplace.prices.updatePrice(price);
+console.log(response);
+```
+
+**Callback Example**
+```javascript
+const price = {
+    pricing: [
+        {
+            currentPrice: {
+                amount: 12.34,
+                currency: 'USD'
+            },
+            currentPriceType: 'BASE'
+        }
+    ],
+    sku: '97964_KFTest'
+};
+
+walmartMarketplace.prices.updatePrice(price, function(err, response) {
+    console.log(response);
+});
+```
+
+**Options**
+```
+{
+    'WM_QOS.CORRELATION_ID': '00000000-0000-0000-0000-000000000000' // A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+}
+```
+
+**Returns**
+```
+{
+    "ItemPriceResponse": {
+        "mart": "WALMART_US",
+        "message": "Thank you. Your price has been updated. Please allow up to five minutes for this change to be reflected on the site.",
+        "sku": "97964_KFTest"
+    }
+}
+```

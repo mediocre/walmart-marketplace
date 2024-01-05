@@ -275,6 +275,170 @@ function WalmartMarketplace(args) {
         }
     };
 
+    this.orders = {
+        /**
+         * Retrieves the details of all the orders for specified search criteria.
+         * @see https://developer.walmart.com/api/us/mp/orders#operation/getAllOrders
+         * @param {Object} [options]
+         * @param {Boolean} [options.autoPagination] If true, automatically fetches all pages of results. Defaults to false.
+         * @param {String} [options.createdEndDate] Fetches all purchase orders that were created before this date. Default is current date. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+         * @param {String} [options.createdStartDate] Fetches all purchase orders that were created after this date. Default is current date - 7 days. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+         * @param {String} [options.customerOrderId] The customer order ID.
+         * @param {String} [options.fromExpectedShipDate] Fetches all purchase orders that have order lines with an expected ship date after this date. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+         * @param {String} [options.lastModifiedEndDate] Fetches all purchase orders that were modified before this date. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+         * @param {String} [options.lastModifiedStartDate] Fetches all purchase orders that were modified after this date. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+         * @param {String} [options.limit] The number of orders to be returned. Cannot be larger than 200. Default: "100".
+         * @param {String} [options.orderType] Specifies if the order is a regular order or replacement order. Possible values are REGULAR or REPLACEMENT. Provided in response only if query parameter replacementInfo=true.
+         * @param {String} [options.productInfo] Provides the image URL and product weight in response, if available. Allowed values are true or false. Default: "false".
+         * @param {String} [options.purchaseOrderId] The purchase order ID. One customer may have multiple purchase orders.
+         * @param {String} [options.replacementInfo] Provides additional attributes - originalCustomerOrderID, orderType - related to Replacement order, in response, if available. Allowed values are true or false. Default: "false".
+         * @param {String} [options.shipNodeType] Specifies the type of shipNode. Allowed values are SellerFulfilled(Default), WFSFulfilled and 3PLFulfilled. Default: "SellerFulfilled".
+         * @param {String} [options.shippingProgramType] Specifies the type of program. Allowed value is TWO_DAY, ONE_DAY.
+         * @param {String} [options.sku] A seller-provided Product ID.
+         * @param {String} [options.status] Status of purchase order line. Valid statuses are: Created, Acknowledged, Shipped, Delivered and Cancelled.
+         * @param {String} [options.toExpectedShipDate] Fetches all purchase orders that have order lines with an expected ship date before this date. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+         * @param {String} [options['WM_QOS.CORRELATION_ID']] A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+         */
+        getAllOrders: async function(options, callback) {
+            try {
+                // Options are optional
+                if (!options) {
+                    options = {};
+                } else if (typeof options === 'function') {
+                    callback = options;
+                    options = {};
+                }
+
+                const orders = [];
+
+                const fetchOrders = async cursor => {
+                    const queryParameters = new URLSearchParams();
+
+                    ['createdEndDate', 'createdStartDate', 'customerOrderId', 'fromExpectedShipDate', 'lastModifiedEndDate', 'lastModifiedStartDate', 'limit', 'orderType', 'productInfo', 'purchaseOrderId', 'replacementInfo', 'shipNodeType', 'shippingProgramType', 'sku', 'status', 'toExpectedShipDate'].forEach(key => {
+                        if (Object.hasOwn(args, key)) {
+                            queryParameters.set(key, args[key]);
+                        }
+                    });
+
+                    if (cursor) {
+                        queryParameters.set('nextCursor', cursor);
+                    }
+
+                    const url = `${_options.url}/v3/orders?${queryParameters.toString()}`;
+
+                    const response = await fetch(url, {
+                        headers: {
+                            Accept: 'application/json',
+                            'WM_QOS.CORRELATION_ID': crypto.randomUUID(),
+                            'WM_SEC.ACCESS_TOKEN': (await _this.authentication.getAccessToken()).access_token,
+                            'WM_SVC.NAME': _options['WM_SVC.NAME']
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(response.statusText, { cause: response });
+                    }
+
+                    const data = await response.json();
+
+                    if (Array.isArray(data?.list?.elements?.order)) {
+                        orders.push(...data.list.elements.order);
+
+                        // Check for more pages and if pagination is requested
+                        if (options.autoPagination && data?.list?.meta?.nextCursor) {
+                            await fetchOrders(data.list.meta.nextCursor);
+                        }
+                    }
+                };
+
+                // Initial call to fetch orders
+                await fetchOrders(null);
+
+                return finalize(null, orders, callback);
+            } catch(err) {
+                return finalize(err, null, callback);
+            }
+        },
+        /**
+         * Retrieves all the orders with line items that are in the "created" status, that is, these orders have been released from the Walmart Order Management System to the seller for processing. The released orders are the orders that are ready for a seller to fulfill.
+         * @see https://developer.walmart.com/api/us/mp/orders#operation/getAllReleasedOrders
+         * @param {Object} [options]
+         * @param {Boolean} [options.autoPagination] If true, automatically fetches all pages of results. Defaults to false.
+         * @param {String} [options.createdEndDate] Fetches all purchase orders that were created before this date. Default is current date. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+         * @param {String} [options.createdStartDate] Fetches all purchase orders that were created after this date. Default is current date - 7 days. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+         * @param {String} [options.customerOrderId] The customer order ID.
+         * @param {String} [options.fromExpectedShipDate] Fetches all purchase orders that have order lines with an expected ship date after this date. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+         * @param {String} [options.limit] The number of orders to be returned. Cannot be larger than 200. Default: "100".
+         * @param {String} [options.orderType] Specifies if the order is a regular order or replacement order. Possible values are REGULAR or REPLACEMENT. Provided in response only if query parameter replacementInfo=true.
+         * @param {String} [options.productInfo] Provides the image URL and product weight in response, if available. Allowed values are true or false. Default: "false".
+         * @param {String} [options.shipNodeType] Specifies the type of shipNode. Allowed values are SellerFulfilled(Default), WFSFulfilled and 3PLFulfilled. Default: "SellerFulfilled".
+         * @param {String} [options.shippingProgramType] Specifies the type of program. Allowed value is TWO_DAY, ONE_DAY.
+         * @param {String} [options.sku] A seller-provided Product ID.
+         * @param {String} [options.toExpectedShipDate] Fetches all purchase orders that have order lines with an expected ship date before this date. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+         * @param {String} [options['WM_QOS.CORRELATION_ID']] A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+         */
+        getAllReleasedOrders: async function(options, callback) {
+            try {
+                // Options are optional
+                if (!options) {
+                    options = {};
+                } else if (typeof options === 'function') {
+                    callback = options;
+                    options = {};
+                }
+
+                const orders = [];
+
+                const fetchOrders = async cursor => {
+                    const queryParameters = new URLSearchParams();
+
+                    ['createdEndDate', 'createdStartDate', 'customerOrderId', 'fromExpectedShipDate', 'limit', 'orderType', 'productInfo', 'purchaseOrderId', 'replacementInfo', 'shipNodeType', 'shippingProgramType', 'sku', 'toExpectedShipDate'].forEach(key => {
+                        if (Object.hasOwn(args, key)) {
+                            queryParameters.set(key, args[key]);
+                        }
+                    });
+
+                    if (cursor) {
+                        queryParameters.set('nextCursor', cursor);
+                    }
+
+                    const url = `${_options.url}/v3/orders/released?${queryParameters.toString()}`;
+
+                    const response = await fetch(url, {
+                        headers: {
+                            Accept: 'application/json',
+                            'WM_QOS.CORRELATION_ID': crypto.randomUUID(),
+                            'WM_SEC.ACCESS_TOKEN': (await _this.authentication.getAccessToken()).access_token,
+                            'WM_SVC.NAME': _options['WM_SVC.NAME']
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(response.statusText, { cause: response });
+                    }
+
+                    const data = await response.json();
+
+                    if (Array.isArray(data?.list?.elements?.order)) {
+                        orders.push(...data.list.elements.order);
+
+                        // Check for more pages and if pagination is requested
+                        if (options.autoPagination && data?.list?.meta?.nextCursor) {
+                            await fetchOrders(data.list.meta.nextCursor);
+                        }
+                    }
+                };
+
+                // Initial call to fetch orders
+                await fetchOrders(null);
+
+                return finalize(null, orders, callback);
+            } catch(err) {
+                return finalize(err, null, callback);
+            }
+        }
+    };
+
     this.prices = {
         /**
          * Updates the regular price for a given item.

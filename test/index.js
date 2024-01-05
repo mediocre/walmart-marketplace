@@ -366,6 +366,86 @@ test('WalmartMarketplace.items', async (t) => {
     });
 });
 
+test('WalmartMarketplace.orders', async (t) => {
+    await test('WalmartMarketplace.orders.getAllOrders(options)', async (t) => {
+        await test('should return json', async () => {
+            let walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            // HACK: The following code adds an access token to the cache for a different environment
+            cache.clear();
+            const accessToken = await walmartMarketplace.authentication.getAccessToken();
+            const json = JSON.parse(cache.keys()[0]);
+            json.url = 'https://httpbin.org/json#';
+            cache.put(JSON.stringify(json), accessToken);
+
+            walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET,
+                url: 'https://httpbin.org/json#'
+            });
+
+            const orders = await walmartMarketplace.orders.getAllOrders();
+            assert(orders);
+        });
+    });
+
+    await test('WalmartMarketplace.orders.getAllOrders(options, callback)', async (t) => {
+        await test('should return json', async () => {
+            let walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            // HACK: The following code adds an access token to the cache for a different environment
+            cache.clear();
+            const accessToken = await walmartMarketplace.authentication.getAccessToken();
+            const json = JSON.parse(cache.keys()[0]);
+            json.url = 'https://httpbin.org/json#';
+            cache.put(JSON.stringify(json), accessToken);
+
+            walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET,
+                url: 'https://httpbin.org/json#'
+            });
+
+            walmartMarketplace.orders.getAllOrders(function(err, orders) {
+                assert.ifError(err);
+                assert(orders);
+            });
+        });
+    });
+
+    await test('WalmartMarketplace.orders.getAllReleasedOrders(options)', async (t) => {
+        await test('should return json', async () => {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            const orders = await walmartMarketplace.orders.getAllReleasedOrders();
+            assert(orders);
+        });
+    });
+
+    await test('WalmartMarketplace.orders.getAllReleasedOrders(options, callback)', async (t) => {
+        await test('should return json', async () => {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            walmartMarketplace.orders.getAllReleasedOrders(function(err, orders) {
+                assert.ifError(err);
+                assert(orders);
+            });
+        });
+    });
+});
+
 test('WalmartMarketplace.prices', async (t) => {
     await test('WalmartMarketplace.prices.updatePrice(price, options)', async (t) => {
         await test('should return json', async () => {

@@ -14,7 +14,7 @@ test('WalmartMarketplace.inventory', async (t) => {
                 clientSecret: process.env.CLIENT_SECRET
             });
 
-            const inventory = await walmartMarketplace.inventory.getInventory('97964_KFTest', { 'WM_QOS.CORRELATION_ID': crypto.randomUUID() });
+            const inventory = await walmartMarketplace.inventory.getInventory('97964_KFTest');
             assert(inventory);
             assert.strictEqual(inventory.sku, '97964_KFTest');
         });

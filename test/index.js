@@ -6,6 +6,51 @@ const cache = require('memory-cache');
 
 const WalmartMarketplace = require('../index');
 
+test('WalmartMarketplace.inventory', async (t) => {
+    await test('WalmartMarketplace.inventory.getInventory(sku, options)', async (t) => {
+        await test('should return json', async () => {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            const inventory = await walmartMarketplace.inventory.getInventory('97964_KFTest');
+            assert(inventory);
+            assert.strictEqual(inventory.sku, '97964_KFTest');
+        });
+    });
+
+    await test('WalmartMarketplace.inventory.getInventory(sku, options, callback)', async (t) => {
+        await test('should return json', function(t, done) {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            const price = {
+                pricing: [
+                    {
+                        currentPrice: {
+                            amount: 12.34,
+                            currency: 'USD'
+                        },
+                        currentPriceType: 'BASE'
+                    }
+                ],
+                sku: '97964_KFTest'
+            };
+    
+            walmartMarketplace.inventory.getInventory('97964_KFTest', { 'WM_QOS.CORRELATION_ID': crypto.randomUUID() }, function(err, inventory) {
+                assert.ifError(err);
+                assert(inventory);
+                assert.strictEqual(inventory.sku, '97964_KFTest');
+                
+                done();
+            });
+        });
+    });
+});
+
 test('WalmartMarketplace.items', async (t) => {
     await test('WalmartMarketplace.items.bulkItemSetup(feedType, file, options)', async (t) => {
         await test('should return json', async () => {

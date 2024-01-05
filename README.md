@@ -55,6 +55,44 @@ walmartMarketplace.authentication.getAccessToken(function(err, accessToken) {
 }
 ```
 
+## walmartMarketplace.inventory.getInventory(sku, [options])
+
+You can use this API to get the inventory for a given item.
+
+https://developer.walmart.com/api/us/mp/inventory
+
+**Promise Example**
+```javascript
+const inventory = await walmartMarketplace.inventory.getInventory('97964_KFTest');
+console.log(inventory);
+```
+
+**Callback Example**
+```javascript
+walmartMarketplace.inventory.getInventory('97964_KFTest', function(err, inventory) {
+    console.log(inventory);
+});
+```
+
+**Options**
+```
+{
+    shipNode: '721407', // The shipNode for which the inventory is requested
+    'WM_QOS.CORRELATION_ID': '00000000-0000-0000-0000-000000000000' // A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+}
+```
+
+**Returns**
+```
+{
+    "sku": "97964_KFTest",
+    "quantity": {
+        "unit": "EACH",
+        "amount": 10
+    }
+}
+```
+
 ## walmartMarketplace.items.bulkItemSetup(feedType, file, [options])
 
 Use this API for initial item setup and maintenance.

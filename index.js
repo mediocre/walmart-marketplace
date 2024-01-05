@@ -96,6 +96,55 @@ function WalmartMarketplace(args) {
         }
     };
 
+    this.inventory = {
+        /**
+         * You can use this API to get the inventory for a given item.
+         * @see https://developer.walmart.com/api/us/mp/inventory
+         * @param {String} sku An arbitrary alphanumeric unique ID, specified by the seller, which identifies each item.
+         * @param {Object} [options]
+         * @param {String} [options.shipNode] The shipNode for which the inventory is requested.
+         * @param {String} [options['WM_QOS.CORRELATION_ID']] A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+         */
+        getInventory: async function(sku, options, callback) {
+            try {
+                // Options are optional
+                if (!options) {
+                    options = {};
+                } else if (typeof options === 'function') {
+                    callback = options;
+                    options = {};
+                }
+
+                const queryParameters = new URLSearchParams({ sku });
+
+                ['shipNode'].forEach(key => {
+                    if (Object.hasOwn(args, key)) {
+                        queryParameters.set(key, args[key]);
+                    }
+                });
+
+                const url = `${_options.url}/v3/inventory?${queryParameters.toString()}`;
+
+                const response = await fetch(url, {
+                    headers: {
+                        Accept: 'application/json',
+                        'WM_QOS.CORRELATION_ID': options['WM_QOS.CORRELATION_ID'] || crypto.randomUUID(),
+                        'WM_SEC.ACCESS_TOKEN': (await _this.authentication.getAccessToken()).access_token,
+                        'WM_SVC.NAME': _options['WM_SVC.NAME']
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(response.statusText, { cause: response });
+                }
+
+                return finalize(null, await response.json(), callback);
+            } catch(err) {
+                return finalize(err, null, callback);
+            }
+        }
+    };
+
     this.items = {
         /**
          * Use this API for initial item setup and maintenance.

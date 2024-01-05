@@ -384,7 +384,7 @@ test('WalmartMarketplace.orders', async (t) => {
             walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET,
-                //url: 'https://httpbin.org/json#'
+                url: 'https://httpbin.org/json#'
             });
 
             const orders = await walmartMarketplace.orders.getAllOrders();

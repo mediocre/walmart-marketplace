@@ -118,8 +118,8 @@ function WalmartMarketplace(args) {
                 const queryParameters = new URLSearchParams({ sku });
 
                 ['shipNode'].forEach(key => {
-                    if (Object.hasOwn(args, key)) {
-                        queryParameters.set(key, args[key]);
+                    if (Object.hasOwn(options, key)) {
+                        queryParameters.set(key, options[key]);
                     }
                 });
 

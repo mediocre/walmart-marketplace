@@ -287,6 +287,22 @@ walmartMarketplace.orders.getAllOrders(options, function(err, orders) {
 ```
 {
     autoPagination: false, // If true, automatically fetches all pages of results. Defaults to false.
+    createdEndDate: '2020-03-16T10:30:15Z', // Fetches all purchase orders that were created before this date. Default is current date. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+    createdStartDate: '2020-03-16T10:30:15Z', // Fetches all purchase orders that were created after this date. Default is current date - 7 days. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+    customerOrderId: '5281956426648', // The customer order ID.
+    fromExpectedShipDate: '2020-03-16T10:30:15Z', // Fetches all purchase orders that have order lines with an expected ship date after this date. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+    lastModifiedEndDate: '2020-03-16T10:30:15Z', // Fetches all purchase orders that were modified before this date. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+    lastModifiedStartDate: '2020-03-16T10:30:15Z', // Fetches all purchase orders that were modified after this date. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+    limit: '100', // The number of orders to be returned. Cannot be larger than 200. Default: "100".
+    orderType: 'REGULAR', // Specifies if the order is a regular order or replacement order. Possible values are REGULAR or REPLACEMENT. Provided in response only if query parameter replacementInfo=true.
+    productInfo: 'false', // Provides the image URL and product weight in response, if available. Allowed values are true or false. Default: "false".
+    purchaseOrderId: '1796277083022', // The purchase order ID. One customer may have multiple purchase orders.
+    replacementInfo: 'false', // Provides additional attributes - originalCustomerOrderID, orderType - related to Replacement order, in response, if available. Allowed values are true or false. Default: "false".
+    shipNodeType: 'SellerFulfilled', // Specifies the type of shipNode. Allowed values are SellerFulfilled(Default), WFSFulfilled and 3PLFulfilled. Default: "SellerFulfilled".
+    shippingProgramType: 'TWO_DAY', // Specifies the type of program. Allowed value is TWO_DAY, ONE_DAY.
+    sku: '97964_KFTest', // A seller-provided Product ID.
+    status: 'Created', // Status of purchase order line. Valid statuses are: Created, Acknowledged, Shipped, Delivered and Cancelled.
+    toExpectedShipDate: '2020-03-16T10:30:15Z', // Fetches all purchase orders that have order lines with an expected ship date before this date. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
     'WM_QOS.CORRELATION_ID': '00000000-0000-0000-0000-000000000000' // A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
 }
 ```

@@ -388,6 +388,135 @@ walmartMarketplace.orders.getAllOrders(options, function(err, orders) {
 ]
 ```
 
+## walmartMarketplace.orders.getAllReleaseOrders([options])
+
+Retrieves all the orders with line items that are in the "created" status, that is, these orders have been released from the Walmart Order Management System to the seller for processing. The released orders are the orders that are ready for a seller to fulfill.
+
+https://developer.walmart.com/api/us/mp/orders#operation/getAllReleasedOrders
+
+**Promise Example**
+```javascript
+const options = {
+    sku: '97964_KFTest'
+};
+
+const orders = await walmartMarketplace.orders.getAllReleaseOrders(options);
+console.log(orders);
+```
+
+**Callback Example**
+```javascript
+const options = {
+    sku: '97964_KFTest'
+};
+
+walmartMarketplace.orders.getAllReleaseOrders(options, function(err, orders) {
+    console.log(orders);
+});
+```
+
+**Options**
+```
+{
+    autoPagination: false, // If true, automatically fetches all pages of results. Defaults to false.
+    createdEndDate: '2020-03-16T10:30:15Z', // Fetches all purchase orders that were created before this date. Default is current date. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+    createdStartDate: '2020-03-16T10:30:15Z', // Fetches all purchase orders that were created after this date. Default is current date - 7 days. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+    customerOrderId: '5281956426648', // The customer order ID.
+    fromExpectedShipDate: '2020-03-16T10:30:15Z', // Fetches all purchase orders that have order lines with an expected ship date after this date. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+    limit: '100', // The number of orders to be returned. Cannot be larger than 200. Default: "100".
+    orderType: 'REGULAR', // Specifies if the order is a regular order or replacement order. Possible values are REGULAR or REPLACEMENT. Provided in response only if query parameter replacementInfo=true.
+    productInfo: 'false', // Provides the image URL and product weight in response, if available. Allowed values are true or false. Default: "false".
+    purchaseOrderId: '1796277083022', // The purchase order ID. One customer may have multiple purchase orders.
+    replacementInfo: 'false', // Provides additional attributes - originalCustomerOrderID, orderType - related to Replacement order, in response, if available. Allowed values are true or false. Default: "false".
+    shipNodeType: 'SellerFulfilled', // Specifies the type of shipNode. Allowed values are SellerFulfilled(Default), WFSFulfilled and 3PLFulfilled. Default: "SellerFulfilled".
+    shippingProgramType: 'TWO_DAY', // Specifies the type of program. Allowed value is TWO_DAY, ONE_DAY.
+    sku: '97964_KFTest', // A seller-provided Product ID.
+    toExpectedShipDate: '2020-03-16T10:30:15Z', // Fetches all purchase orders that have order lines with an expected ship date before this date. Use either UTC or ISO 8601 formats. Date example: '2020-03-16'(yyyy-MM-dd). Date with Timestamp example: '2020-03-16T10:30:15Z'(yyyy-MM-dd'T'HH:mm:ssZ).
+    'WM_QOS.CORRELATION_ID': '00000000-0000-0000-0000-000000000000' // A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+}
+```
+
+**Returns**
+```
+[
+  {
+    "purchaseOrderId": "1796277083022",
+    "customerOrderId": "5281956426648",
+    "customerEmailId": "3A31739D8B0A45A1B23F7F8C81C8747F@relay.walmart.com",
+    "orderType": "REPLACEMENT",
+    "originalCustomerOrderID": "1234567891234",
+    "orderDate": 1568466571000,
+    "shippingInfo": {
+      "phone": "3155598681",
+      "estimatedDeliveryDate": 1569438000000,
+      "estimatedShipDate": 1568700000000,
+      "methodCode": "Value",
+      "postalAddress": {
+        "name": "Kathryn Cole",
+        "address1": "3258BWarners rd",
+        "address2": "Garage",
+        "city": "Warners",
+        "state": "NY",
+        "postalCode": "13164",
+        "country": "USA",
+        "addressType": "RESIDENTIAL"
+      }
+    },
+    "orderLines": {
+      "orderLine": [
+        {
+          "lineNumber": "4",
+          "item": {
+            "productName": "Beba Bean Pee-pee Teepee Airplane - Blue - Laundry Bag",
+            "sku": "test1"
+          },
+          "charges": {
+            "charge": [
+              {
+                "chargeType": "PRODUCT",
+                "chargeName": "ItemPrice",
+                "chargeAmount": {
+                  "currency": "USD",
+                  "amount": 10
+                },
+                "tax": {
+                  "taxName": "Tax1",
+                  "taxAmount": {
+                    "currency": "USD",
+                    "amount": 0.8
+                  }
+                }
+              }
+            ]
+          },
+          "orderLineQuantity": {
+            "unitOfMeasurement": "EACH",
+            "amount": "1"
+          },
+          "statusDate": 1568466647000,
+          "orderLineStatuses": {
+            "orderLineStatus": [
+              {
+                "status": "Created",
+                "statusQuantity": {
+                  "unitOfMeasurement": "EACH",
+                  "amount": "1"
+                }
+              }
+            ]
+          },
+          "fulfillment": {
+            "fulfillmentOption": "S2H",
+            "shipMethod": "VALUE",
+            "pickUpDateTime": 1568919600000
+          }
+        }
+      ]
+    }
+  }
+]
+```
+
 ## walmartMarketplace.prices.updatePrice(price, [options])
 
 Updates the regular price for a given item.

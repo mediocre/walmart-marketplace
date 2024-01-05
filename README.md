@@ -218,7 +218,7 @@ walmartMarketplace.items.retireAnItem('97964_KFTest', function(err, response) {
 }
 ```
 
-# walmartMarketplace.prices.updatePrice(price, [options])
+## walmartMarketplace.prices.updatePrice(price, [options])
 
 Updates the regular price for a given item.
 

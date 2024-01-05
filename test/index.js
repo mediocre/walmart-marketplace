@@ -229,7 +229,7 @@ test('WalmartMarketplace.items', async (t) => {
             assert.strictEqual(response.sku, '123456');
         });
 
-        await test('should return an error for non 200 status code', async () => {
+        await test('should throw an error for non 200 status code', async () => {
             let walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET
@@ -316,6 +316,78 @@ test('WalmartMarketplace.prices', async (t) => {
             const response = await walmartMarketplace.prices.updatePrice(price);
             assert(response);
             assert.strictEqual(response.ItemPriceResponse.sku, '97964_KFTest');
+        });
+
+        await test('should throw an error for non 200 status code', async () => {
+            let walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            // HACK: The following code adds an access token to the cache for a different environment
+            cache.clear();
+            const accessToken = await walmartMarketplace.authentication.getAccessToken();
+            const json = JSON.parse(cache.keys()[0]);
+            json.url = 'https://httpbin.org/status/500#';
+            cache.put(JSON.stringify(json), accessToken);
+
+            walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET,
+                url: 'https://httpbin.org/status/500#'
+            });
+
+            try {
+                const price = {
+                    pricing: [
+                        {
+                            currentPrice: {
+                                amount: 12.34,
+                                currency: 'USD'
+                            },
+                            currentPriceType: 'BASE'
+                        }
+                    ],
+                    sku: '97964_KFTest'
+                };
+
+                await walmartMarketplace.prices.updatePrice(price, { 'WM_QOS.CORRELATION_ID': crypto.randomUUID() });
+                assert.fail('Expected an error to be thrown');
+            } catch (err) {
+                assert(err);
+                assert.strictEqual(err.cause.status, 500);
+                assert.strictEqual(err.message, 'INTERNAL SERVER ERROR');
+            }
+        });
+    });
+
+    await test('WalmartMarketplace.prices.updatePrice(price, options, callback)', async (t) => {
+        await test('should return json', function(t, done) {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            const price = {
+                pricing: [
+                    {
+                        currentPrice: {
+                            amount: 12.34,
+                            currency: 'USD'
+                        },
+                        currentPriceType: 'BASE'
+                    }
+                ],
+                sku: '97964_KFTest'
+            };
+    
+            walmartMarketplace.prices.updatePrice(price, function(err, response) {
+                assert.ifError(err);
+                assert(response);
+                assert.strictEqual(response.ItemPriceResponse.sku, '97964_KFTest');
+                
+                done();
+            });
         });
     });
 });

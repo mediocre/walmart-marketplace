@@ -148,6 +148,32 @@ test('WalmartMarketplace.inventory', async (t) => {
             }
         });
     });
+
+    await test('WalmartMarketplace.inventory.updateInventory(inventory, options, callback)', async (t) => {
+        await test('should throw an error for non 200 status code', function (t, done) {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            const inventory = {
+                sku: '97964_KFTest',
+                quantity: {
+                    amount: 1,
+                    unit: 'EACH'
+                }
+            };
+
+            walmartMarketplace.inventory.updateInventory(inventory, function(err, itemDetails) {
+                // HACK: In the sandbox environment, this endpoint always seems to return a 404
+                assert(err);
+                assert.strictEqual(err.cause.status, 404);
+                assert.strictEqual(err.message, 'Not Found');
+                assert.strictEqual(itemDetails, null);
+                done();
+            });
+        });
+    });
 });
 
 test('WalmartMarketplace.items', async (t) => {

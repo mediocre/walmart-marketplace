@@ -93,6 +93,60 @@ walmartMarketplace.inventory.getInventory('97964_KFTest', function(err, inventor
 }
 ```
 
+## walmartMarketplace.inventory.updateInventory(inventory, [options])
+
+Updates the inventory for a given item.
+
+https://developer.walmart.com/api/us/mp/inventory#operation/updateInventoryForAnItem
+
+**Promise Example**
+```javascript
+const inventory = {
+    quantity: {
+        amount: 10,
+        unit: 'EACH'
+    },
+    sku: '97964_KFTest'
+};
+
+const response = await walmartMarketplace.inventory.updateInventory(inventory);
+console.log(response);
+```
+
+**Callback Example**
+```javascript
+const inventory = {
+    quantity: {
+        amount: 10,
+        unit: 'EACH'
+    },
+    sku: '97964_KFTest'
+};
+
+walmartMarketplace.inventory.updateInventory(inventory, function(err, response) {
+    console.log(response);
+});
+```
+
+**Options**
+```
+{
+    shipNode: '721407', // The shipNode for which the inventory is to be updated.
+    'WM_QOS.CORRELATION_ID': '00000000-0000-0000-0000-000000000000' // A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+}
+```
+
+**Returns**
+```
+{
+    "sku": "97964_KFTest",
+    "quantity": {
+        "unit": "EACH",
+        "amount": 10
+    }
+}
+```
+
 ## walmartMarketplace.items.bulkItemSetup(feedType, file, [options])
 
 Use this API for initial item setup and maintenance.

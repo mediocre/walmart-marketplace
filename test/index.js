@@ -505,6 +505,20 @@ test('WalmartMarketplace.orders', async (t) => {
         });
     });
 
+    await test('WalmartMarketplace.orders.acknowledgeOrder(purchaseOrderId, options, callback)', async (t) => {
+        await test('should return json', async () => {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            walmartMarketplace.orders.acknowledgeOrder('1796277083022', function(err, response) {
+                assert.ifError(err);
+                assert(response);
+            });
+        });
+    });
+
     await test('WalmartMarketplace.orders.getAllOrders(options)', async (t) => {
         await test('should return json', async () => {
             let walmartMarketplace = new WalmartMarketplace({

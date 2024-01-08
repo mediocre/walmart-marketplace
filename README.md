@@ -310,6 +310,112 @@ walmartMarketplace.items.retireAnItem('97964_KFTest', function(err, response) {
 }
 ```
 
+## walmartMarketplace.orders.acknowledgeOrder(purchaseOrderId, [options])
+
+You can use this API to acknowledge an entire order, including all of its order lines. The response to a successful call contains the acknowledged order.
+
+https://developer.walmart.com/api/us/mp/orders#operation/acknowledgeOrders
+
+**Promise Example**
+```javascript
+const response = await walmartMarketplace.orders.acknowledgeOrder('1796277083022');
+console.log(response);
+
+```
+
+**Callback Example**
+```javascript
+walmartMarketplace.orders.acknowledgeOrder('1796277083022', function(err, response) {
+    console.log(response);
+});
+```
+
+**Options**
+```
+{
+    'WM_QOS.CORRELATION_ID': '00000000-0000-0000-0000-000000000000' // A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+}
+```
+
+**Returns**
+```
+{
+  "order": {
+    "purchaseOrderId": "1796277083022",
+    "customerOrderId": "5281956426648",
+    "customerEmailId": "3A31739D8B0A45A1B23F7F8C81C8747F@relay.walmart.com",
+    "orderDate": 1568466571000,
+    "shippingInfo": {
+      "phone": "3155598681",
+      "estimatedDeliveryDate": 1569438000000,
+      "estimatedShipDate": 1568700000000,
+      "methodCode": "Value",
+      "postalAddress": {
+        "name": "Kathryn Cole",
+        "address1": "3258BWarners rd",
+        "address2": "Garage",
+        "city": "Warners",
+        "state": "NY",
+        "postalCode": "13164",
+        "country": "USA",
+        "addressType": "RESIDENTIAL"
+      }
+    },
+    "orderLines": {
+      "orderLine": [
+        {
+          "lineNumber": "4",
+          "item": {
+            "productName": "Beba Bean Pee-pee Teepee Airplane - Blue - Laundry Bag",
+            "sku": "test1"
+          },
+          "charges": {
+            "charge": [
+              {
+                "chargeType": "PRODUCT",
+                "chargeName": "ItemPrice",
+                "chargeAmount": {
+                  "currency": "USD",
+                  "amount": 10
+                },
+                "tax": {
+                  "taxName": "Tax1",
+                  "taxAmount": {
+                    "currency": "USD",
+                    "amount": 0.8
+                  }
+                }
+              }
+            ]
+          },
+          "orderLineQuantity": {
+            "unitOfMeasurement": "EACH",
+            "amount": "1"
+          },
+          "statusDate": 1568753156000,
+          "orderLineStatuses": {
+            "orderLineStatus": [
+              {
+                "status": "Acknowledged",
+                "statusQuantity": {
+                  "unitOfMeasurement": "EACH",
+                  "amount": "1"
+                }
+              }
+            ]
+          },
+          "fulfillment": {
+            "fulfillmentOption": "S2H",
+            "shipMethod": "VALUE",
+            "pickUpDateTime": 1568919600000
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
 ## walmartMarketplace.orders.getAllOrders([options])
 
 Retrieves the details of all the orders for specified search criteria.

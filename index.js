@@ -330,6 +330,45 @@ function WalmartMarketplace(args) {
 
     this.orders = {
         /**
+         * You can use this API to acknowledge an entire order, including all of its order lines. The response to a successful call contains the acknowledged order.
+         * @see https://developer.walmart.com/api/us/mp/orders#operation/acknowledgeOrders
+         * @param {String} purchaseOrderId purchaseOrderId
+         * @param {Object} [options]
+         * @param {String} [options['WM_QOS.CORRELATION_ID']] A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+         */
+        acknowledgeOrder: async function(purchaseOrderId, options, callback) {
+            try {
+                // Options are optional
+                if (!options) {
+                    options = {};
+                } else if (typeof options === 'function') {
+                    callback = options;
+                    options = {};
+                }
+
+                const url = `${_options.url}/v3/orders/${purchaseOrderId}/acknowledge`;
+
+                const response = await fetch(url, {
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        'WM_QOS.CORRELATION_ID': options['WM_QOS.CORRELATION_ID'] || crypto.randomUUID(),
+                        'WM_SEC.ACCESS_TOKEN': (await _this.authentication.getAccessToken()).access_token,
+                        'WM_SVC.NAME': _options['WM_SVC.NAME']
+                    },
+                    method: 'POST'
+                });
+
+                if (!response.ok) {
+                    throw new Error(response.statusText, { cause: response });
+                }
+
+                return finalize(null, await response.json(), callback);
+            } catch(err) {
+                return finalize(err, null, callback);
+            }
+        },
+        /**
          * Retrieves the details of all the orders for specified search criteria.
          * @see https://developer.walmart.com/api/us/mp/orders#operation/getAllOrders
          * @param {Object} [options]

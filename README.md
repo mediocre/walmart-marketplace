@@ -677,6 +677,281 @@ walmartMarketplace.orders.getAllReleaseOrders(options, function(err, orders) {
 ]
 ```
 
+## walmartMarketplace.orders.shipOrderLines(purchaseOrderId, orderShipment, [options])
+
+Updates the status of order lines to Shipped and trigger the charge to the customer. The response to a successful call contains the order with the shipped line items.
+
+https://developer.walmart.com/api/us/mp/orders#operation/shippingUpdates
+
+**Promise Example**
+```javascript
+const orderShipment = {
+    orderShipment: {
+        orderLines: {
+            orderLine: [
+                {
+                    intentToCancelOverride: false,
+                    lineNumber: '1',
+                    orderLineStatuses: {
+                        orderLineStatus: [
+                            {
+                                status: 'Shipped',
+                                statusQuantity: {
+                                    amount: '1',
+                                    unitOfMeasurement: 'EACH'
+                                },
+                                trackingInfo: {
+                                    carrierName: {
+                                        carrier: 'UPS'
+                                    },
+                                    methodCode: 'Standard',
+                                    shipDateTime: 1580821866000,
+                                    trackingNumber: '22344',
+                                    trackingURL: 'http://walmart/tracking/ups?&type=MP&seller_id=12345&promise_date=03/02/2020&dzip=92840&tracking_numbers=92345'
+                                },
+                                returnCenterAddress: {
+                                    address1: 'walmart store 2',
+                                    city: 'Huntsville',
+                                    country: 'USA',
+                                    dayPhone: '12344',
+                                    emailId: 'walmart@walmart.com',
+                                    postalCode: '35805',
+                                    name: 'walmart',
+                                    state: 'AL',
+                                }
+                            }
+                        ]
+                    },
+                    sellerOrderId: '92344'
+                },
+                {
+                    lineNumber: '2',
+                    orderLineStatuses: {
+                        orderLineStatus: [
+                            {
+                                status: 'Shipped',
+                                statusQuantity: {
+                                    amount: '1',
+                                    unitOfMeasurement: 'EACH'
+                                },
+                                trackingInfo: {
+                                    carrierName: {
+                                        carrier: 'FedEx'
+                                    },
+                                    methodCode: 'Express',
+                                    shipDateTime: 1580821866000,
+                                    trackingNumber: 22344,
+                                    trackingURL: 'http://walmart/tracking/fedEx?&type=MP&seller_id=12345&promise_date=03/02/2020&dzip=92840&tracking_numbers=92344'
+                                },
+                                returnCenterAddress: {
+                                    address1: 'walmart store 2',
+                                    city: 'Huntsville',
+                                    country: 'USA',
+                                    dayPhone: '12344',
+                                    emailId: 'walmart@walmart.com',
+                                    postalCode: '35805',
+                                    name: 'walmart',
+                                    state: 'AL',
+                                }
+                            }
+                        ]
+                    },
+                    sellerOrderId: '92344'
+                }
+            ]
+        }
+    }
+};
+
+const response = await walmartMarketplace.orders.shipOrderLines('1234567891234', orderShipment);
+console.log(response);
+```
+
+**Callback Example**
+```javascript
+const orderShipment = {
+    orderShipment: {
+        orderLines: {
+            orderLine: [
+                {
+                    intentToCancelOverride: false,
+                    lineNumber: '1',
+                    orderLineStatuses: {
+                        orderLineStatus: [
+                            {
+                                status: 'Shipped',
+                                statusQuantity: {
+                                    amount: '1',
+                                    unitOfMeasurement: 'EACH'
+                                },
+                                trackingInfo: {
+                                    carrierName: {
+                                        carrier: 'UPS'
+                                    },
+                                    methodCode: 'Standard',
+                                    shipDateTime: 1580821866000,
+                                    trackingNumber: '22344',
+                                    trackingURL: 'http://walmart/tracking/ups?&type=MP&seller_id=12345&promise_date=03/02/2020&dzip=92840&tracking_numbers=92345'
+                                },
+                                returnCenterAddress: {
+                                    address1: 'walmart store 2',
+                                    city: 'Huntsville',
+                                    country: 'USA',
+                                    dayPhone: '12344',
+                                    emailId: 'walmart@walmart.com',
+                                    postalCode: '35805',
+                                    name: 'walmart',
+                                    state: 'AL',
+                                }
+                            }
+                        ]
+                    },
+                    sellerOrderId: '92344'
+                },
+                {
+                    lineNumber: '2',
+                    orderLineStatuses: {
+                        orderLineStatus: [
+                            {
+                                status: 'Shipped',
+                                statusQuantity: {
+                                    amount: '1',
+                                    unitOfMeasurement: 'EACH'
+                                },
+                                trackingInfo: {
+                                    carrierName: {
+                                        carrier: 'FedEx'
+                                    },
+                                    methodCode: 'Express',
+                                    shipDateTime: 1580821866000,
+                                    trackingNumber: 22344,
+                                    trackingURL: 'http://walmart/tracking/fedEx?&type=MP&seller_id=12345&promise_date=03/02/2020&dzip=92840&tracking_numbers=92344'
+                                },
+                                returnCenterAddress: {
+                                    address1: 'walmart store 2',
+                                    city: 'Huntsville',
+                                    country: 'USA',
+                                    dayPhone: '12344',
+                                    emailId: 'walmart@walmart.com',
+                                    postalCode: '35805',
+                                    name: 'walmart',
+                                    state: 'AL',
+                                }
+                            }
+                        ]
+                    },
+                    sellerOrderId: '92344'
+                }
+            ]
+        }
+    }
+};
+
+walmartMarketplace.orders.shipOrderLines('1234567891234', orderShipment, function(err, response) {
+    console.log(response);
+});
+```
+
+**Options**
+```
+{
+    'WM_QOS.CORRELATION_ID': '00000000-0000-0000-0000-000000000000' // A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+}
+```
+
+**Returns**
+```
+{
+  "order": {
+    "purchaseOrderId": "1234567891234",
+    "customerOrderId": "9876543212345",
+    "sellerOrderId": "13233454564657",
+    "customerEmailId": "customer@walmartlabs.com",
+    "orderDate": 1478284060000,
+    "shippingInfo": {
+      "phone": "6501234567",
+      "estimatedDeliveryDate": 1479798000000,
+      "estimatedShipDate": 1478674800000,
+      "methodCode": "Value",
+      "postalAddress": {
+        "name": "Jane Doe",
+        "address1": "123 Main street",
+        "city": "Sunnyvale",
+        "state": "CA",
+        "postalCode": "94086",
+        "country": "USA",
+        "addressType": "OFFICE"
+      }
+    },
+    "orderLines": {
+      "orderLine": [
+        {
+          "lineNumber": "1",
+          "item": {
+            "productName": "Kenmore CF-1 or 20-86883 Canister Secondary Filter Generic 2 Pack",
+            "sku": "wei-ASSET-675gku675"
+          },
+          "charges": {
+            "charge": [
+              {
+                "chargeType": "PRODUCT",
+                "chargeName": "ItemPrice",
+                "chargeAmount": {
+                  "currency": "USD",
+                  "amount": 555
+                },
+                "tax": {
+                  "taxName": "Tax1",
+                  "taxAmount": {
+                    "currency": "USD",
+                    "amount": 48.56
+                  }
+                }
+              }
+            ]
+          },
+          "orderLineQuantity": {
+            "unitOfMeasurement": "EACH",
+            "amount": "1"
+          },
+          "statusDate": 1478297929000,
+          "orderLineStatuses": {
+            "orderLineStatus": [
+              {
+                "status": "Shipped",
+                "statusQuantity": {
+                  "unitOfMeasurement": "EACH",
+                  "amount": "1"
+                },
+                "trackingInfo": {
+                  "shipDateTime": 1438163400000,
+                  "carrierName": {
+                    "carrier": "FedEx"
+                  },
+                  "methodCode": "Value",
+                  "trackingNumber": "911001572321619861",
+                  "trackingURL": "http://www.fedex.com/Tracking?action=track=english=us=x=911001572321619861"
+                },
+                "returnCenterAddress": {
+                  "name": "ABC",
+                  "address1": "123 Bridge street",
+                  "city": "Huntsville",
+                  "state": "AL",
+                  "postalCode": "35805",
+                  "country": "USA",
+                  "dayPhone": "6501234567",
+                  "emailId": "RCemailaddress@company.com"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
 ## walmartMarketplace.prices.updatePrice(price, [options])
 
 Updates the regular price for a given item.

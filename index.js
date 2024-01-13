@@ -528,6 +528,47 @@ function WalmartMarketplace(args) {
             } catch(err) {
                 return finalize(err, null, callback);
             }
+        },
+        /**
+         * Updates the status of order lines to Shipped and trigger the charge to the customer. The response to a successful call contains the order with the shipped line items.
+         * @see https://developer.walmart.com/api/us/mp/orders#operation/shippingUpdates
+         * @param {String} purchaseOrderId purchaseOrderId
+         * @param {Object} orderShipment Information about a shipment
+         * @param {Object} [options]
+         * @param {String} [options['WM_QOS.CORRELATION_ID']] A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+         */
+        shipOrderLines: async function(purchaseOrderId, orderShipment, options, callback) {
+            try {
+                // Options are optional
+                if (!options) {
+                    options = {};
+                } else if (typeof options === 'function') {
+                    callback = options;
+                    options = {};
+                }
+
+                const url = `${_options.url}/v3/orders/${purchaseOrderId}/shipping`;
+
+                const response = await fetch(url, {
+                    body: JSON.stringify(orderShipment),
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        'WM_QOS.CORRELATION_ID': options['WM_QOS.CORRELATION_ID'] || crypto.randomUUID(),
+                        'WM_SEC.ACCESS_TOKEN': (await _this.authentication.getAccessToken()).access_token,
+                        'WM_SVC.NAME': _options['WM_SVC.NAME']
+                    },
+                    method: 'POST'
+                });
+
+                if (!response.ok) {
+                    throw new Error(response.statusText, { cause: response });
+                }
+
+                return finalize(null, await response.json(), callback);
+            } catch(err) {
+                return finalize(err, null, callback);
+            }
         }
     };
 

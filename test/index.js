@@ -853,6 +853,101 @@ test('WalmartMarketplace.orders', async (t) => {
             }
         });
     });
+
+    await test('WalmartMarketplace.orders.shipOrderLines(purchaseOrderId, orderShipment, options, callback)', async (t) => {
+        await test('should return json', function(t, done) {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            const orderShipment = {
+                orderShipment: {
+                    orderLines: {
+                        orderLine: [
+                            {
+                                intentToCancelOverride: false,
+                                lineNumber: '1',
+                                orderLineStatuses: {
+                                    orderLineStatus: [
+                                        {
+                                            status: 'Shipped',
+                                            statusQuantity: {
+                                                amount: '1',
+                                                unitOfMeasurement: 'EACH'
+                                            },
+                                            trackingInfo: {
+                                                carrierName: {
+                                                    carrier: 'UPS'
+                                                },
+                                                methodCode: 'Standard',
+                                                shipDateTime: 1580821866000,
+                                                trackingNumber: '22344',
+                                                trackingURL: 'http://walmart/tracking/ups?&type=MP&seller_id=12345&promise_date=03/02/2020&dzip=92840&tracking_numbers=92345'
+                                            },
+                                            returnCenterAddress: {
+                                                address1: 'walmart store 2',
+                                                city: 'Huntsville',
+                                                country: 'USA',
+                                                dayPhone: '12344',
+                                                emailId: 'walmart@walmart.com',
+                                                postalCode: '35805',
+                                                name: 'walmart',
+                                                state: 'AL',
+                                            }
+                                        }
+                                    ]
+                                },
+                                sellerOrderId: '92344'
+                            },
+                            {
+                                lineNumber: '2',
+                                orderLineStatuses: {
+                                    orderLineStatus: [
+                                        {
+                                            status: 'Shipped',
+                                            statusQuantity: {
+                                                amount: '1',
+                                                unitOfMeasurement: 'EACH'
+                                            },
+                                            trackingInfo: {
+                                                carrierName: {
+                                                    carrier: 'FedEx'
+                                                },
+                                                methodCode: 'Express',
+                                                shipDateTime: 1580821866000,
+                                                trackingNumber: 22344,
+                                                trackingURL: 'http://walmart/tracking/fedEx?&type=MP&seller_id=12345&promise_date=03/02/2020&dzip=92840&tracking_numbers=92344'
+                                            },
+                                            returnCenterAddress: {
+                                                address1: 'walmart store 2',
+                                                city: 'Huntsville',
+                                                country: 'USA',
+                                                dayPhone: '12344',
+                                                emailId: 'walmart@walmart.com',
+                                                postalCode: '35805',
+                                                name: 'walmart',
+                                                state: 'AL',
+                                            }
+                                        }
+                                    ]
+                                },
+                                sellerOrderId: '92344'
+                            }
+                        ]
+                    }
+                }
+            };
+
+            walmartMarketplace.orders.shipOrderLines('1234567891234', orderShipment, function(err, response) {
+                assert.ifError(err);
+                assert(response);
+                assert.strictEqual(response.order[0].purchaseOrderId, '1234567891234');
+                assert(response.order[0].orderLines.orderLine.every(orderLine => orderLine.orderLineStatuses.orderLineStatus.every(orderLineStatus => orderLineStatus.status === 'Shipped')));
+                done();
+            });
+        });
+    });
 });
 
 test('WalmartMarketplace.prices', async (t) => {

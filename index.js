@@ -292,6 +292,53 @@ function WalmartMarketplace(args) {
             }
         },
         /**
+         * The Item Search API allows you to query the Walmart.com global product catalog by item keyword, UPC or GTIN.
+         * @see https://developer.walmart.com/api/us/mp/items#operation/getSearchResult
+         * @param {Object} [options]
+         * @param {String} [options.gtin] Specifies a Global Trade Item Number (GTIN) search. GTIN must be 14 digits.
+         * @param {String} [options.query] Specifies a keyword search as a String.
+         * @param {String} [options.upc] Specifies a Universal Product Code (UPC) search. UPC must be 12 digits.
+         * @param {String} [options['WM_QOS.CORRELATION_ID']] A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+         */
+        itemSearch: async function(options, callback) {
+            try {
+                // Options are optional
+                if (!options) {
+                    options = {};
+                } else if (typeof options === 'function') {
+                    callback = options;
+                    options = {};
+                }
+
+                const queryParameters = new URLSearchParams();
+
+                ['gtin', 'query', 'upc'].forEach(key => {
+                    if (Object.hasOwn(options, key)) {
+                        queryParameters.set(key, options[key]);
+                    }
+                });
+
+                const url = `${_options.url}/v3/items/walmart/search?${queryParameters.toString()}`;
+
+                const response = await fetch(url, {
+                    headers: {
+                        Accept: 'application/json',
+                        'WM_QOS.CORRELATION_ID': options['WM_QOS.CORRELATION_ID'] || crypto.randomUUID(),
+                        'WM_SEC.ACCESS_TOKEN': (await _this.authentication.getAccessToken()).access_token,
+                        'WM_SVC.NAME': _options['WM_SVC.NAME']
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(response.statusText, { cause: response });
+                }
+
+                return finalize(null, await response.json(), callback);
+            } catch(err) {
+                return finalize(err, null, callback);
+            }
+        },
+        /**
          * Completely deactivates and un-publishes an item from the site.
          * @see https://developer.walmart.com/api/us/mp/items#operation/retireAnItem
          * @param {String} sku An arbitrary alphanumeric unique ID, specified by the seller, which identifies each item.

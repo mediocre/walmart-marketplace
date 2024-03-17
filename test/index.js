@@ -376,6 +376,62 @@ test('WalmartMarketplace.items', async (t) => {
         });
     });
 
+    await test('WalmartMarketplace.items.itemSearch(options)', async (t) => {
+        await test('should return json', async () => {
+            let walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            const searchResults = await walmartMarketplace.items.itemSearch({ upc: '911138034047' });
+            assert(searchResults);
+        });
+
+        await test('should return an error for non 200 status code', async () => {
+            let walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            // HACK: The following code adds an access token to the cache for a different environment
+            cache.clear();
+            const accessToken = await walmartMarketplace.authentication.getAccessToken();
+            const json = JSON.parse(cache.keys()[0]);
+            json.url = 'https://httpbin.org/status/500#';
+            cache.put(JSON.stringify(json), accessToken);
+
+            walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET,
+                url: 'https://httpbin.org/status/500#'
+            });
+
+            try {
+                await walmartMarketplace.items.itemSearch({ upc: '911138034047' });
+                assert.fail('Expected an error to be thrown');
+            } catch (err) {
+                assert(err);
+                assert.strictEqual(err.cause.status, 500);
+                assert.strictEqual(err.message, 'INTERNAL SERVER ERROR');
+            }
+        });
+    });
+
+    await test('WalmartMarketplace.items.itemSearch(options, callback)', async (t) => {
+        await test('should return search results', function(t, done) {
+            const walmartMarketplace = new WalmartMarketplace({
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
+            });
+
+            walmartMarketplace.items.itemSearch({ upc: '911138034047' }, function(err, searchResults) {
+                assert.ifError(err);
+                assert(searchResults);
+                done();
+            });
+        });
+    });
+
     await test('WalmartMarketplace.items.retireAnItem(sku, options)', async (t) => {
         await test('should retire an item', async () => {
             const walmartMarketplace = new WalmartMarketplace({

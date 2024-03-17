@@ -274,6 +274,145 @@ walmartMarketplace.items.getAnItem('97964_KFTest', function(err, itemDetails) {
 }
 ```
 
+## walmartMarketplace.items.itemSearch(options)
+
+The Item Search API allows you to query the Walmart.com global product catalog by item keyword, UPC or GTIN.
+
+https://developer.walmart.com/api/us/mp/items#operation/getSearchResult
+
+**Promise Example**
+```javascript
+const searchResults = await walmartMarketplace.items.itemSearch({ upc: '086279171801' });
+console.log(searchResults);
+```
+
+**Callback Example**
+```javascript
+walmartMarketplace.items.itemSearch({ upc: '086279171801' }, function(err, searchResults) {
+    console.log(searchResults);
+});
+```
+
+**Options**
+```
+{
+    gtin: '911138034047', // Specifies a Global Trade Item Number (GTIN) search. GTIN must be 14 digits.
+    query: 'ipad', // Specifies a keyword search as a String.
+    upc: '086279171801', // Specifies a Universal Product Code (UPC) search. UPC must be 12 digits.
+    'WM_QOS.CORRELATION_ID': '00000000-0000-0000-0000-000000000000' // A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+}
+```
+
+**Returns**
+```
+{
+  "items": [
+    {
+      "itemId": "393016031",
+      "condition": "New",
+      "isMarketPlaceItem": true,
+      "images": [
+        {
+          "url": "http://i5.walmartimages.com/asr/556cc5a5-e729-4e48-b801-0146bbc97cdb_1.97507cfd7df5ca0fb6570e6a36495016.jpeg?odnHeight=180&odnWidth=180&odnBg=ffffff"
+        },
+        {
+          "url": "http://i5.walmartimages.com/asr/556cc5a5-e729-4e48-b801-0146bbc97cdb_1.97507cfd7df5ca0fb6570e6a36495016.jpeg?odnHeight=180&odnWidth=180&odnBg=ffffff"
+        }
+      ],
+      "customerRating": "3.799999952316284",
+      "price": {
+        "amount": "12.989999771118164",
+        "currency": "USD"
+      },
+      "description": "<li>Designed for Apple <mark>iPad</mark> <mark>mini</mark> 1/2/3</li><li>Hybrid Silicone/PC Protective Shell with Kickstand</li><li>Shock-Absorption <mark><mark>Case</mark>s</mark> Protection <mark>Case</mark> for boys girls</li>",
+      "title": "<mark>iPad</mark> <mark>mini</mark> 3/ 2 /1 <mark>Case</mark>,  ULAK Three Layer Hybrid Heavy Duty Shockproof Protective <mark>Case</mark> with Kickstand for Apple <mark>iPad</mark> <mark>Mini</mark>,<mark>iPad</mark> <mark>Mini</mark> 2,<mark>iPad</mark> <mark>Mini</mark> 3",
+      "brand": "ULAK",
+      "productType": "VARIANT",
+      "properties": {
+        "variant_items_num": "5",
+        "num_reviews": "16",
+        "categories": [
+          "Electronics",
+          "iPad & Tablets",
+          "Apple iPad Accessories",
+          "iPad Cases, Sleeves & Bags"
+        ],
+        "variants": {
+          "variantMeta": [
+            {
+              "name": "actual_color"
+            }
+          ],
+          "variantData": [
+            {
+              "productImageUrl": "https://i5.walmartimages.com/asr/82b8c484-651b-4e50-979c-42164649b8c5_1.bcf0b3a35d5767ee402c06b26a25f191.jpeg?odnHeight=180&odnWidth=180&odnBg=ffffff",
+              "itemId": "936491618",
+              "isAvailable": "Y",
+              "title": "iPad mini 3/ 2 /1 Case,  ULAK Three Layer Hybrid Heavy Duty Shockproof Protective Case with Kickstand for Apple iPad Mini,iPad Mini 2,iPad Mini 3",
+              "variantValues": [
+                {
+                  "name": "actual_color",
+                  "value": "Black/Black"
+                }
+              ]
+            },
+            {
+              "productImageUrl": "https://i5.walmartimages.com/asr/e3d7c2bd-55d2-41ab-97b8-59c441918307_1.5f96dab5b8eddf4eb4857103a8c54913.jpeg?odnHeight=180&odnWidth=180&odnBg=ffffff",
+              "itemId": "865777580",
+              "isAvailable": "N",
+              "title": "iPad mini 3 Case, iPad mini 2 Case, iPad mini Case, ULAK Three Layer Hybrid Heavy Duty Shockproof Protective Case with Kickstand for Apple iPad Mini,iPad Mini 2,iPad Mini 3",
+              "variantValues": [
+                {
+                  "name": "actual_color",
+                  "value": "Black/Blue"
+                }
+              ]
+            },
+            {
+              "productImageUrl": "https://i5.walmartimages.com/asr/556cc5a5-e729-4e48-b801-0146bbc97cdb_1.97507cfd7df5ca0fb6570e6a36495016.jpeg?odnHeight=180&odnWidth=180&odnBg=ffffff",
+              "itemId": "393016031",
+              "isAvailable": "N",
+              "title": "iPad mini 3/ 2 /1 Case,  ULAK Three Layer Hybrid Heavy Duty Shockproof Protective Case with Kickstand for Apple iPad Mini,iPad Mini 2,iPad Mini 3",
+              "variantValues": [
+                {
+                  "name": "actual_color",
+                  "value": "Blue+Lime Green"
+                }
+              ]
+            },
+            {
+              "productImageUrl": "https://i5.walmartimages.com/asr/5920a66b-a944-47c5-8ada-d1621d379ca9_1.4a20b40c528c6f8553f66043f38841e7.jpeg?odnHeight=180&odnWidth=180&odnBg=ffffff",
+              "itemId": "451755050",
+              "isAvailable": "Y",
+              "title": "iPad mini 3/ 2 /1 Case,  ULAK Three Layer Hybrid Heavy Duty Shockproof Protective Case with Kickstand for Apple iPad Mini,iPad Mini 2,iPad Mini 3",
+              "variantValues": [
+                {
+                  "name": "actual_color",
+                  "value": "Mint Green/Grey"
+                }
+              ]
+            },
+            {
+              "productImageUrl": "https://i5.walmartimages.com/asr/ba395bef-48bf-46ac-8322-962e381c4e81_1.ea83239b1d41dc6e49521c2d1026f9f5.jpeg?odnHeight=180&odnWidth=180&odnBg=ffffff",
+              "itemId": "800154739",
+              "isAvailable": "Y",
+              "title": "iPad Mini Case,iPad Mini 2 Case,iPad Mini 3 Case,iPad mini Retina Case,ULAK Three Layer Heavy Duty Shockproof Protective Case Cover Kickstand, Pink",
+              "variantValues": [
+                {
+                  "name": "actual_color",
+                  "value": "Rose Gold/Rose Gold"
+                }
+              ]
+            }
+          ]
+        },
+        "next_day_eligible": false
+      }
+    }
+  ]
+}
+```
+
 ## walmartMarketplace.items.retireAnItem(sku, [options])
 
 Completely deactivates and un-publishes an item from the site.

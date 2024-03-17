@@ -302,14 +302,6 @@ function WalmartMarketplace(args) {
          */
         itemSearch: async function(options, callback) {
             try {
-                // Options are optional
-                if (!options) {
-                    options = {};
-                } else if (typeof options === 'function') {
-                    callback = options;
-                    options = {};
-                }
-
                 const queryParameters = new URLSearchParams();
 
                 ['gtin', 'query', 'upc'].forEach(key => {

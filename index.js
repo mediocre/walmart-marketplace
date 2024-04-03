@@ -446,19 +446,21 @@ function WalmartMarketplace(args) {
                 const orders = [];
 
                 const fetchOrders = async cursor => {
-                    const queryParameters = new URLSearchParams();
-
-                    ['createdEndDate', 'createdStartDate', 'customerOrderId', 'fromExpectedShipDate', 'lastModifiedEndDate', 'lastModifiedStartDate', 'limit', 'orderType', 'productInfo', 'purchaseOrderId', 'replacementInfo', 'shipNodeType', 'shippingProgramType', 'sku', 'status', 'toExpectedShipDate'].forEach(key => {
-                        if (Object.hasOwn(options, key)) {
-                            queryParameters.set(key, options[key]);
-                        }
-                    });
+                    let url;
 
                     if (cursor) {
-                        queryParameters.set('nextCursor', cursor);
-                    }
+                        url = `${_options.url}/v3/orders?${cursor}`;
+                    } else {
+                        const queryParameters = new URLSearchParams();
 
-                    const url = `${_options.url}/v3/orders?${queryParameters.toString()}`;
+                        ['createdEndDate', 'createdStartDate', 'customerOrderId', 'fromExpectedShipDate', 'lastModifiedEndDate', 'lastModifiedStartDate', 'limit', 'orderType', 'productInfo', 'purchaseOrderId', 'replacementInfo', 'shipNodeType', 'shippingProgramType', 'sku', 'status', 'toExpectedShipDate'].forEach(key => {
+                            if (Object.hasOwn(options, key)) {
+                                queryParameters.set(key, options[key]);
+                            }
+                        });
+
+                        url = `${_options.url}/v3/orders?${queryParameters.toString()}`;
+                    }
 
                     const response = await fetch(url, {
                         headers: {

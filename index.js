@@ -769,6 +769,8 @@ function WalmartMarketplace(args) {
          * @see https://developer.walmart.com/api/us/mp/onrequestreports#operation/getRequestsStatus
          * @param {String} reportType Type of report for which the request is created. Example, ITEM for Item Report. Enum: "ITEM" "INVENTORY" "CANCELLATION" "DELIVERY_DEFECT" "ITEM_PERFORMANCE" "PROMO" "RETURN_OVERRIDES" "CPA" "SHIPPING_CONFIGURATION" "SHIPPING_PROGRAM" "FITMENT_MISSING_ATTR" "FITMENT_ACES_COVERAGE" "BUYBOX" "ASSORTMENT_RECOMMENDATIONS"
          * @param {Object} [options] 
+         * @param {Boolean} [options.autoPagination] If true, automatically fetches all pages of results. Defaults to false.
+         * @param {Number} [options.limit] Number of records to be returned. Default is 10.
          * @param {String} [options.reportVersion] Version of report for which the request is created. Example, v1.
          * @param {String} [options.requestStatus] Status of report request. Possible values are RECEIVED, INPROGRESS, READY, ERROR.
          * @param {String} [options.requestSubmissionEndDate] Report request submittal end date for range of reports requested, in format YYYY-MM-DDTHH:mm:ssZ
@@ -785,30 +787,54 @@ function WalmartMarketplace(args) {
                     options = {};
                 }
 
-                const queryParameters = new URLSearchParams({ reportType });
+                const reportRequests = [];
 
-                ['reportVersion', 'requestStatus', 'requestSubmissionEndDate', 'requestSubmissionStartDate'].forEach(key => {
-                    if (Object.hasOwn(options, key)) {
-                        queryParameters.set(key, options[key]);
+                const fetchReportRequests = async cursor => {
+                    let url;
+
+                    if (cursor) {
+                        url = `${_options.url}/v3/reports/reportRequests?${cursor}`;
+                    } else {
+                        const queryParameters = new URLSearchParams({ reportType });
+
+                        ['limit', 'reportVersion', 'requestStatus', 'requestSubmissionEndDate', 'requestSubmissionStartDate'].forEach(key => {
+                            if (Object.hasOwn(options, key)) {
+                                queryParameters.set(key, options[key]);
+                            }
+                        });
+
+                        url = `${_options.url}/v3/reports/reportRequests?${queryParameters.toString()}`;
                     }
-                });
 
-                const url = `${_options.url}/v3/reports/reportRequests?${queryParameters.toString()}`;
+                    const response = await fetch(url, {
+                        headers: {
+                            Accept: 'application/json',
+                            'WM_QOS.CORRELATION_ID': crypto.randomUUID(),
+                            'WM_SEC.ACCESS_TOKEN': (await _this.authentication.getAccessToken()).access_token,
+                            'WM_SVC.NAME': _options['WM_SVC.NAME']
+                        }
+                    });
 
-                const response = await fetch(url, {
-                    headers: {
-                        Accept: 'application/json',
-                        'WM_QOS.CORRELATION_ID': options['WM_QOS.CORRELATION_ID'] || crypto.randomUUID(),
-                        'WM_SEC.ACCESS_TOKEN': (await _this.authentication.getAccessToken()).access_token,
-                        'WM_SVC.NAME': _options['WM_SVC.NAME']
+                    if (!response.ok) {
+                        throw new Error(response.statusText, { cause: response });
                     }
-                });
 
-                if (!response.ok) {
-                    throw new Error(response.statusText, { cause: response });
-                }
+                    const data = await response.json();
 
-                return finalize(null, await response.json(), callback);
+                    if (Array.isArray(data?.requests)) {
+                        reportRequests.push(...data.requests);
+
+                        // Check for more pages and if pagination is requested
+                        if (options.autoPagination && data?.nextCursor) {
+                            await fetchReportRequests(data.nextCursor);
+                        }
+                    }
+                };
+
+                // Initial call to fetch report requests
+                await fetchReportRequests(null);
+
+                return finalize(null, reportRequests, callback);
             } catch(err) {
                 return finalize(err, null, callback);
             }

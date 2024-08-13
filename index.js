@@ -245,6 +245,80 @@ function WalmartMarketplace(args) {
             }
         },
         /**
+         * Get Catalog Search Result.
+         * @see https://developer.walmart.com/api/us/mp/items#operation/getCatalogSearch
+         * @param {Object} [options]
+         * @param {Boolean} [options.autoPagination] If true, automatically fetches all pages of results. Defaults to false.
+         * @param {Number} [options.limit] Number of items. Default: 100.
+         * @param {Object} [options.query]
+         * @param {String} [options.query.field] Enum: "productName" "sku" "gtin" "wpid" "upc" "isbn" "ean" "itemId" "condition".
+         * @param {String} [options.query.value]
+         * @param {String} [options['WM_QOS.CORRELATION_ID']] A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+         */
+        catalogSearch: async function(options, callback) {
+            try {
+                const items = [];
+
+                const fetchItems = async cursor => {
+                    let url;
+
+                    if (cursor) {
+                        url = `${_options.url}/v3/items/catalog/search?nextCursor=${cursor}`;
+                    } else {
+                        const queryParameters = new URLSearchParams();
+
+                        ['limit'].forEach(key => {
+                            if (Object.hasOwn(options, key)) {
+                                queryParameters.set(key, options[key]);
+                            }
+                        });
+
+                        url = `${_options.url}/v3/items/catalog/search?${queryParameters.toString()}`;
+                    }
+
+                    let body = {};
+
+                    if (options?.query) {
+                        body.query = options.query;
+                    }
+
+                    const response = await fetch(url, {
+                        body: JSON.stringify(body),
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                            'WM_QOS.CORRELATION_ID': crypto.randomUUID(),
+                            'WM_SEC.ACCESS_TOKEN': (await _this.authentication.getAccessToken()).access_token,
+                            'WM_SVC.NAME': _options['WM_SVC.NAME']
+                        },
+                        method: 'POST'
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(response.statusText, { cause: response });
+                    }
+
+                    const data = await response.json();
+
+                    if (Array.isArray(data?.payload)) {
+                        items.push(...data.payload);
+
+                        // Check for more pages and if pagination is requested
+                        if (options.autoPagination && data?.nextCursor) {
+                            await fetchOrders(data.nextCursor);
+                        }
+                    }
+                };
+
+                // Initial call to fetch items
+                await fetchItems(null);
+
+                return finalize(null, items, callback);
+            } catch(err) {
+                return finalize(err, null, callback);
+            }
+        },
+        /**
          * Retrieves an item and displays the item details.
          * @see https://developer.walmart.com/api/us/mp/items#operation/getAnItem
          * @param {String} id Represents the seller-specified unique ID for each item. Takes SKU code by default. If you require more specific item codes, such as GTIN, UPC, ISBN, EAN, or ITEM_ID, you need to use the productIdType query parameter and specify the desired code e.g. productIdType=GTIN.

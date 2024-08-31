@@ -305,7 +305,73 @@ function WalmartMarketplace(args) {
 
                         // Check for more pages and if pagination is requested
                         if (options.autoPagination && data?.nextCursor) {
-                            await fetchOrders(data.nextCursor);
+                            await fetchItems(data.nextCursor);
+                        }
+                    }
+                };
+
+                // Initial call to fetch items
+                await fetchItems(null);
+
+                return finalize(null, items, callback);
+            } catch(err) {
+                return finalize(err, null, callback);
+            }
+        },
+        /**
+         * Displays a list of all items by using either nextCursor or offset and limit query parameters.
+         * @see https://developer.walmart.com/api/us/mp/items#operation/getAllItems
+         * @param {Object} [options]
+         * @param {Boolean} [options.autoPagination] If true, automatically fetches all pages of results. Defaults to false.
+         * @param {String} [options.lifecycleStatus] The lifecycle status of an item describes where the item listing is in the overall lifecycle. Examples of allowed values are ACTIVE , ARCHIVED, RETIRED.
+         * @param {Number} [options.limit] Number of items. Default: 20.
+         * @param {Number} [options.offset] The object response to start with, where 0 is the first entity that can be requested. Default: 0.
+         */
+        getAllItems: async function(options, callback) {
+            try {
+                const items = [];
+                const limit = options.limit || 20;
+
+                const fetchItems = async offset => {
+                    const queryParameters = new URLSearchParams();
+                    queryParameters.set('limit', limit);
+
+                    ['lifecycleStatus'].forEach(key => {
+                        if (Object.hasOwn(options, key)) {
+                            queryParameters.set(key, options[key]);
+                        }
+                    });
+
+                    if (offset) {
+                        queryParameters.set('offset', offset);
+                    }
+
+                    const url = `${_options.url}/v3/items?${queryParameters.toString()}`;
+
+                    const response = await fetch(url, {
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                            'WM_QOS.CORRELATION_ID': crypto.randomUUID(),
+                            'WM_SEC.ACCESS_TOKEN': (await _this.authentication.getAccessToken()).access_token,
+                            'WM_SVC.NAME': _options['WM_SVC.NAME']
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(response.statusText, { cause: response });
+                    }
+
+                    const data = await response.json();
+
+                    if (Array.isArray(data?.ItemResponse)) {
+                        items.push(...data.ItemResponse);
+
+                        // Check for more pages and if pagination is requested
+                        if (options.autoPagination) {
+                            if (items.length < data.totalItems - (options.offset || 0)) {
+                                await fetchItems(items.length);
+                            }
                         }
                     }
                 };

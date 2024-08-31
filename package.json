@@ -17,5 +17,5 @@
         "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
         "test": "node --test"
     },
-    "version": "1.4.4"
+    "version": "1.4.5"
 }

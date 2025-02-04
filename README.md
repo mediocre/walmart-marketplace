@@ -1153,3 +1153,95 @@ walmartMarketplace.prices.updatePrice(price, function(err, response) {
     }
 }
 ```
+
+## walmartMarketplace.reports.getAvailableReconciliationReportDates([options])
+
+This API will list all the available Marketplace reconciliation report dates for the Seller.
+
+https://developer.walmart.com/api/us/mp/reports#operation/getAvailableV1ReconReportDates
+
+**Promise Example**
+```javascript
+const response = await walmartMarketplace.reports.getAvailableReconciliationReportDates();
+console.log(response);
+```
+
+**Callback Example**
+```javascript
+walmartMarketplace.reports.getAvailableReconciliationReportDates(function(err, response) {
+    console.log(response);
+});
+```
+
+**Options**
+```
+{
+    'WM_QOS.CORRELATION_ID': '00000000-0000-0000-0000-000000000000' // A unique ID which identifies each API call and used to track and debug issues. Defaults to a random UUID.
+}
+```
+
+**Returns**
+```
+{
+    "availableApReportDates": [ '04252023', '05092023', '11082022', '12062022' ]
+}
+```
+
+## walmartMarketplace.reports.getReconciliationReport(reportDate, [options])
+
+Seller can download the reconciliation report for a specific date using this API. Dates available to be downloaded can be found by using the Get available reconciliation report dates API.
+
+https://developer.walmart.com/api/us/mp/reports#operation/getReconReportV1
+
+**Promise Example**
+```javascript
+const response = await walmartMarketplace.reports.getReconciliationReport('04252023', { autoPagination: true });
+console.log(response);
+```
+
+**Callback Example**
+```javascript
+walmartMarketplace.reports.getReconciliationReport('04252023', { autoPagination: true }, function(err, response) {
+    console.log(response);
+});
+```
+
+**Returns**
+```
+[
+    {
+        "Period Start Date": "12/11/2025",
+        "Period End Date": "12/19/2025",
+        "Currency": "USD",
+        "Transaction Type": "PaymentSummary",
+        "Total Payable": "0.74",
+        "Transaction Description": "Deposited in  account",
+        "Transaction Posted Timestamp": "01/02/2025"
+    },
+    {
+        "Shipping Method": "Marketplace value",
+        "Partner Item Name": "MTV Mens Kanji Throwback 90s Logo Short Sleeve Graphic T-shirt With Music Television up to Size 3XL",
+        "Customer Order line #": "1",
+        "Contract Category": "Apparel & Accessories",
+        "Transaction Description": "Purchase",
+        "Product Tax Code": "100",
+        "Period Start Date": "\"\"",
+        "Ship to Zipcode": "72712",
+        "Ship to City": "Bentonville",
+        "Transaction Key": "2020_12_19_317",
+        "Transaction Posted Timestamp": "12/18/2020",
+        "Ship Qty": "1",
+        "Amount": "14.98",
+        "Transaction Type": "Sale",
+        "Partner GTIN": "05705584961234",
+        "Ship to State": "AR",
+        "Amount Type": "Product Price",
+        "Fulfillment Type": "Seller Fulfilled",
+        "Customer Order #": "6222001976751",
+        "Purchase Order #": "1803550130406",
+        "Product Type": "Bag Clips",
+        "Partner Item Id": "sku-123",
+        "Purchase Order line #": "1"
+    }
+]
+```

@@ -6,8 +6,8 @@ const cache = require('memory-cache');
 
 const WalmartMarketplace = require('../index');
 
-test('WalmartMarketplace.inventory', async (t) => {
-    await test('WalmartMarketplace.inventory.getInventory(sku, options)', async (t) => {
+test('WalmartMarketplace.inventory', async () => {
+    await test('WalmartMarketplace.inventory.getInventory(sku, options)', async () => {
         await test('should return json', async () => {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
@@ -49,37 +49,37 @@ test('WalmartMarketplace.inventory', async (t) => {
         });
     });
 
-    await test('WalmartMarketplace.inventory.getInventory(sku, options, callback)', async (t) => {
+    await test('WalmartMarketplace.inventory.getInventory(sku, options, callback)', async () => {
         await test('should return json', function(t, done) {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET
             });
 
-            const price = {
-                pricing: [
-                    {
-                        currentPrice: {
-                            amount: 12.34,
-                            currency: 'USD'
-                        },
-                        currentPriceType: 'BASE'
-                    }
-                ],
-                sku: '97964_KFTest'
-            };
-    
+            // const price = {
+            //     pricing: [
+            //         {
+            //             currentPrice: {
+            //                 amount: 12.34,
+            //                 currency: 'USD'
+            //             },
+            //             currentPriceType: 'BASE'
+            //         }
+            //     ],
+            //     sku: '97964_KFTest'
+            // };
+
             walmartMarketplace.inventory.getInventory('97964_KFTest', function(err, inventory) {
                 assert.ifError(err);
                 assert(inventory);
                 assert.strictEqual(inventory.sku, '97964_KFTest');
-                
+
                 done();
             });
         });
     });
 
-    await test('WalmartMarketplace.inventory.updateInventory(inventory, options)', async (t) => {
+    await test('WalmartMarketplace.inventory.updateInventory(inventory, options)', async () => {
         await test('should return json', async () => {
             let walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
@@ -98,7 +98,7 @@ test('WalmartMarketplace.inventory', async (t) => {
                 clientSecret: process.env.CLIENT_SECRET,
                 url: 'https://httpbin.org/anything#'
             });
-            
+
             const inventory = {
                 sku: '97964_KFTest',
                 quantity: {
@@ -149,8 +149,8 @@ test('WalmartMarketplace.inventory', async (t) => {
         });
     });
 
-    await test('WalmartMarketplace.inventory.updateInventory(inventory, options, callback)', async (t) => {
-        await test('should return a 200 status code', function (t, done) {
+    await test('WalmartMarketplace.inventory.updateInventory(inventory, options, callback)', async () => {
+        await test('should return a 200 status code', function(t, done) {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET
@@ -176,8 +176,8 @@ test('WalmartMarketplace.inventory', async (t) => {
     });
 });
 
-test('WalmartMarketplace.items', async (t) => {
-    await test('WalmartMarketplace.items.bulkItemSetup(feedType, file, options)', async (t) => {
+test('WalmartMarketplace.items', async () => {
+    await test('WalmartMarketplace.items.bulkItemSetup(feedType, file, options)', async () => {
         await test('should return json', async () => {
             let walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
@@ -271,7 +271,7 @@ test('WalmartMarketplace.items', async (t) => {
         });
     });
 
-    await test('WalmartMarketplace.items.bulkItemSetup(feedType, file, options, callback)', async (t) => {
+    await test('WalmartMarketplace.items.bulkItemSetup(feedType, file, options, callback)', async () => {
         await test('should callback', function(t, done) {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
@@ -303,8 +303,8 @@ test('WalmartMarketplace.items', async (t) => {
             });
         });
     });
-    
-    await test('WalmartMarketplace.items.getAnItem(id, options)', async (t) => {
+
+    await test('WalmartMarketplace.items.getAnItem(id, options)', async () => {
         await test('should return json', async () => {
             let walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
@@ -358,7 +358,7 @@ test('WalmartMarketplace.items', async (t) => {
         });
     });
 
-    await test('WalmartMarketplace.items.getAnItem(id, options, callback)', async (t) => {
+    await test('WalmartMarketplace.items.getAnItem(id, options, callback)', async () => {
         await test('should return an error for non 200 status code', function(t, done) {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
@@ -376,7 +376,7 @@ test('WalmartMarketplace.items', async (t) => {
         });
     });
 
-    await test('WalmartMarketplace.items.itemSearch(options)', async (t) => {
+    await test('WalmartMarketplace.items.itemSearch(options)', async () => {
         await test('should return json', async () => {
             let walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
@@ -417,7 +417,7 @@ test('WalmartMarketplace.items', async (t) => {
         });
     });
 
-    await test('WalmartMarketplace.items.itemSearch(options, callback)', async (t) => {
+    await test('WalmartMarketplace.items.itemSearch(options, callback)', async () => {
         await test('should return search results', function(t, done) {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
@@ -432,13 +432,13 @@ test('WalmartMarketplace.items', async (t) => {
         });
     });
 
-    await test('WalmartMarketplace.items.retireAnItem(sku, options)', async (t) => {
+    await test('WalmartMarketplace.items.retireAnItem(sku, options)', async () => {
         await test('should retire an item', async () => {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET
             });
-    
+
             const response = await walmartMarketplace.items.retireAnItem('123456');
             assert.strictEqual(response.errors, null);
             assert.strictEqual(response.sku, '123456');
@@ -449,7 +449,7 @@ test('WalmartMarketplace.items', async (t) => {
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET
             });
-    
+
             const response = await walmartMarketplace.items.retireAnItem('123456', { 'WM_QOS.CORRELATION_ID': crypto.randomUUID() });
             assert.strictEqual(response.errors, null);
             assert.strictEqual(response.sku, '123456');
@@ -485,18 +485,18 @@ test('WalmartMarketplace.items', async (t) => {
         });
     });
 
-    await test('WalmartMarketplace.items.retireAnItem(sku, options, callback)', async (t) => {
+    await test('WalmartMarketplace.items.retireAnItem(sku, options, callback)', async () => {
         await test('should retire an item', function(t, done) {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET
             });
-    
+
             walmartMarketplace.items.retireAnItem('123456', function(err, response) {
                 assert.ifError(err);
                 assert.strictEqual(response.errors, null);
                 assert.strictEqual(response.sku, '123456');
-                
+
                 done();
             });
         });
@@ -506,20 +506,20 @@ test('WalmartMarketplace.items', async (t) => {
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET
             });
-    
+
             walmartMarketplace.items.retireAnItem('123456', { 'WM_QOS.CORRELATION_ID': crypto.randomUUID() }, function(err, response) {
                 assert.ifError(err);
                 assert.strictEqual(response.errors, null);
                 assert.strictEqual(response.sku, '123456');
-                
+
                 done();
             });
         });
     });
 });
 
-test('WalmartMarketplace.orders', async (t) => {
-    await test('WalmartMarketplace.orders.acknowledgeOrder(purchaseOrderId, options)', async (t) => {
+test('WalmartMarketplace.orders', async () => {
+    await test('WalmartMarketplace.orders.acknowledgeOrder(purchaseOrderId, options)', async () => {
         await test('should return json', async () => {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
@@ -561,7 +561,7 @@ test('WalmartMarketplace.orders', async (t) => {
         });
     });
 
-    await test('WalmartMarketplace.orders.acknowledgeOrder(purchaseOrderId, options, callback)', async (t) => {
+    await test('WalmartMarketplace.orders.acknowledgeOrder(purchaseOrderId, options, callback)', async () => {
         await test('should return json', async () => {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
@@ -575,7 +575,7 @@ test('WalmartMarketplace.orders', async (t) => {
         });
     });
 
-    await test('WalmartMarketplace.orders.getAllOrders(options)', async (t) => {
+    await test('WalmartMarketplace.orders.getAllOrders(options)', async () => {
         await test('should return json', async () => {
             let walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
@@ -629,7 +629,7 @@ test('WalmartMarketplace.orders', async (t) => {
         });
     });
 
-    await test('WalmartMarketplace.orders.getAllOrders(options, callback)', async (t) => {
+    await test('WalmartMarketplace.orders.getAllOrders(options, callback)', async () => {
         await test('should return json', async () => {
             let walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
@@ -685,7 +685,7 @@ test('WalmartMarketplace.orders', async (t) => {
         });
     });
 
-    await test('WalmartMarketplace.orders.getAllReleasedOrders(options)', async (t) => {
+    await test('WalmartMarketplace.orders.getAllReleasedOrders(options)', async () => {
         await test('should return json', async () => {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
@@ -697,7 +697,7 @@ test('WalmartMarketplace.orders', async (t) => {
         });
     });
 
-    await test('WalmartMarketplace.orders.getAllReleasedOrders(options, callback)', async (t) => {
+    await test('WalmartMarketplace.orders.getAllReleasedOrders(options, callback)', async () => {
         await test('should return json', async () => {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
@@ -711,7 +711,7 @@ test('WalmartMarketplace.orders', async (t) => {
         });
     });
 
-    await test('WalmartMarketplace.orders.shipOrderLines(purchaseOrderId, orderShipment, options)', async (t) => {
+    await test('WalmartMarketplace.orders.shipOrderLines(purchaseOrderId, orderShipment, options)', async () => {
         await test('should return json', async () => {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
@@ -750,7 +750,7 @@ test('WalmartMarketplace.orders', async (t) => {
                                                 emailId: 'walmart@walmart.com',
                                                 postalCode: '35805',
                                                 name: 'walmart',
-                                                state: 'AL',
+                                                state: 'AL'
                                             }
                                         }
                                     ]
@@ -784,7 +784,7 @@ test('WalmartMarketplace.orders', async (t) => {
                                                 emailId: 'walmart@walmart.com',
                                                 postalCode: '35805',
                                                 name: 'walmart',
-                                                state: 'AL',
+                                                state: 'AL'
                                             }
                                         }
                                     ]
@@ -854,7 +854,7 @@ test('WalmartMarketplace.orders', async (t) => {
                                                     emailId: 'walmart@walmart.com',
                                                     postalCode: '35805',
                                                     name: 'walmart',
-                                                    state: 'AL',
+                                                    state: 'AL'
                                                 }
                                             }
                                         ]
@@ -888,7 +888,7 @@ test('WalmartMarketplace.orders', async (t) => {
                                                     emailId: 'walmart@walmart.com',
                                                     postalCode: '35805',
                                                     name: 'walmart',
-                                                    state: 'AL',
+                                                    state: 'AL'
                                                 }
                                             }
                                         ]
@@ -910,7 +910,7 @@ test('WalmartMarketplace.orders', async (t) => {
         });
     });
 
-    await test('WalmartMarketplace.orders.shipOrderLines(purchaseOrderId, orderShipment, options, callback)', async (t) => {
+    await test('WalmartMarketplace.orders.shipOrderLines(purchaseOrderId, orderShipment, options, callback)', async () => {
         await test('should return json', function(t, done) {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
@@ -949,7 +949,7 @@ test('WalmartMarketplace.orders', async (t) => {
                                                 emailId: 'walmart@walmart.com',
                                                 postalCode: '35805',
                                                 name: 'walmart',
-                                                state: 'AL',
+                                                state: 'AL'
                                             }
                                         }
                                     ]
@@ -983,7 +983,7 @@ test('WalmartMarketplace.orders', async (t) => {
                                                 emailId: 'walmart@walmart.com',
                                                 postalCode: '35805',
                                                 name: 'walmart',
-                                                state: 'AL',
+                                                state: 'AL'
                                             }
                                         }
                                     ]
@@ -1006,8 +1006,8 @@ test('WalmartMarketplace.orders', async (t) => {
     });
 });
 
-test('WalmartMarketplace.prices', async (t) => {
-    await test('WalmartMarketplace.prices.updatePrice(price, options)', async (t) => {
+test('WalmartMarketplace.prices', async () => {
+    await test('WalmartMarketplace.prices.updatePrice(price, options)', async () => {
         await test('should return json', async () => {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
@@ -1075,7 +1075,7 @@ test('WalmartMarketplace.prices', async (t) => {
         });
     });
 
-    await test('WalmartMarketplace.prices.updatePrice(price, options, callback)', async (t) => {
+    await test('WalmartMarketplace.prices.updatePrice(price, options, callback)', async () => {
         await test('should return json', function(t, done) {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
@@ -1094,56 +1094,56 @@ test('WalmartMarketplace.prices', async (t) => {
                 ],
                 sku: '97964_KFTest'
             };
-    
+
             walmartMarketplace.prices.updatePrice(price, function(err, response) {
                 assert.ifError(err);
                 assert(response);
                 assert.strictEqual(response.ItemPriceResponse.sku, '97964_KFTest');
-                
+
                 done();
             });
         });
     });
 });
 
-test('WalmartMarketplace.authentication', async (t) => {
+test('WalmartMarketplace.authentication', async () => {
     await test('WalmartMarketplace.authentication.getAccessToken(options)', async (t) => {
         t.beforeEach(() => {
             cache.clear();
         });
-    
+
         await test('should support options', async () => {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET
             });
-    
+
             const accessToken = await walmartMarketplace.authentication.getAccessToken({ 'WM_QOS.CORRELATION_ID': crypto.randomUUID() });
             assert(accessToken);
         });
-    
+
         await test('should cache the access token', async () => {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET
             });
-    
+
             assert.strictEqual(cache.size(), 0);
-    
+
             const accessToken1 = await walmartMarketplace.authentication.getAccessToken();
             assert.strictEqual(cache.size(), 1);
-    
+
             const accessToken2 = await walmartMarketplace.authentication.getAccessToken();
             assert.strictEqual(cache.size(), 1);
-    
+
             assert.deepStrictEqual(accessToken1, accessToken2);
         });
-    
+
         await test('should return an error for invalid url', async () => {
             const walmartMarketplace = new WalmartMarketplace({
                 url: 'invalid'
             });
-    
+
             try {
                 await walmartMarketplace.authentication.getAccessToken();
                 assert.fail('Expected an error to be thrown');
@@ -1152,14 +1152,14 @@ test('WalmartMarketplace.authentication', async (t) => {
                 assert.strictEqual(err.message, 'Failed to parse URL from invalid/v3/token');
             }
         });
-    
+
         await test('should return an error for non 200 status code', async () => {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET,
                 url: 'https://httpbin.org/status/500#'
             });
-    
+
             try {
                 await walmartMarketplace.authentication.getAccessToken();
                 assert.fail('Expected an error to be thrown');
@@ -1175,70 +1175,70 @@ test('WalmartMarketplace.authentication', async (t) => {
         t.beforeEach(() => {
             cache.clear();
         });
-    
+
         await test('should support options', function(t, done) {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET
             });
-    
+
             walmartMarketplace.authentication.getAccessToken({ 'WM_QOS.CORRELATION_ID': crypto.randomUUID() }, function(err, accessToken) {
                 assert.ifError(err);
                 assert(accessToken);
-                
+
                 done();
             });
         });
-    
+
         await test('should cache the access token', function(t, done) {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET
             });
-    
+
             assert.strictEqual(cache.size(), 0);
-    
+
             walmartMarketplace.authentication.getAccessToken(function(err, accessToken1) {
                 assert.ifError(err);
                 assert.strictEqual(cache.size(), 1);
-    
+
                 walmartMarketplace.authentication.getAccessToken(function(err, accessToken2) {
                     assert.ifError(err);
                     assert.strictEqual(cache.size(), 1);
                     assert.deepStrictEqual(accessToken1, accessToken2);
-    
+
                     done();
                 });
             });
         });
-    
+
         await test('should return an error for invalid url', function(t, done) {
             const walmartMarketplace = new WalmartMarketplace({
                 url: 'invalid'
             });
-    
+
             walmartMarketplace.authentication.getAccessToken(function(err, accessToken) {
                 assert(err);
                 assert.strictEqual(err.message, 'Failed to parse URL from invalid/v3/token');
                 assert.strictEqual(accessToken, null);
-    
+
                 done();
             });
         });
-    
+
         await test('should return an error for non 200 status code', function(t, done) {
             const walmartMarketplace = new WalmartMarketplace({
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET,
                 url: 'https://httpbin.org/status/500#'
             });
-    
+
             walmartMarketplace.authentication.getAccessToken(function(err, accessToken) {
                 assert(err);
                 assert.strictEqual(err.cause.status, 500);
                 assert.strictEqual(err.message, 'INTERNAL SERVER ERROR');
                 assert.strictEqual(accessToken, null);
-    
+
                 done();
             });
         });

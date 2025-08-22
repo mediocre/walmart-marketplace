@@ -330,23 +330,27 @@ function WalmartMarketplace(args) {
         getAllItems: async function(options, callback) {
             try {
                 const items = [];
-                const limit = options.limit || 20;
 
-                const fetchItems = async offset => {
-                    const queryParameters = new URLSearchParams();
-                    queryParameters.set('limit', limit);
+                const fetchItems = async nextCursor => {
+                    let url;
 
-                    ['lifecycleStatus'].forEach(key => {
-                        if (Object.hasOwn(options, key)) {
-                            queryParameters.set(key, options[key]);
+                    if (nextCursor) {
+                        url = `${_options.url}/v3/items?nextCursor=${nextCursor}`;
+                    } else {
+                        const queryParameters = new URLSearchParams();
+
+                        ['lifecycleStatus', 'limit', 'offset'].forEach(key => {
+                            if (Object.hasOwn(options, key)) {
+                                queryParameters.set(key, options[key]);
+                            }
+                        });
+
+                        if (options.autoPagination) {
+                            queryParameters.set('nextCursor', '*');
                         }
-                    });
 
-                    if (offset) {
-                        queryParameters.set('offset', offset);
+                        url = `${_options.url}/v3/items?${queryParameters.toString()}`;
                     }
-
-                    const url = `${_options.url}/v3/items?${queryParameters.toString()}`;
 
                     const response = await fetch(url, {
                         headers: {
@@ -368,16 +372,14 @@ function WalmartMarketplace(args) {
                         items.push(...data.ItemResponse);
 
                         // Check for more pages and if pagination is requested
-                        if (options.autoPagination) {
-                            if (items.length < data.totalItems - (options.offset || 0)) {
-                                await fetchItems(items.length);
-                            }
+                        if (options.autoPagination && data.nextCursor) {
+                            await fetchItems(data.nextCursor);
                         }
                     }
                 };
 
                 // Initial call to fetch items
-                await fetchItems(null);
+                await fetchItems();
 
                 return finalize(null, items, callback);
             } catch(err) {

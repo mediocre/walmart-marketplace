@@ -6,10 +6,7 @@
     },
     "devDependencies": {
         "@eslint/js": "*",
-        "coveralls": "*",
-        "eslint": "*",
-        "globals": "*",
-        "nyc": "*"
+        "globals": "*"
     },
     "name": "@mediocre/walmart-marketplace",
     "repository": "https://github.com/mediocre/walmart-marketplace",

@@ -6,15 +6,13 @@
     },
     "devDependencies": {
         "@eslint/js": "*",
-        "globals": "*",
         "coveralls": "*",
+        "eslint": "*",
+        "globals": "*",
         "nyc": "*"
     },
     "name": "@mediocre/walmart-marketplace",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/mediocre/walmart-marketplace.git"
-    },
+    "repository": "https://github.com/mediocre/walmart-marketplace",
     "scripts": {
         "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
         "test": "node --test"

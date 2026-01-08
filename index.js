@@ -372,7 +372,7 @@ function WalmartMarketplace(args) {
                         items.push(...data.ItemResponse);
 
                         // Check for more pages and if pagination is requested
-                        if (options.autoPagination && data.nextCursor) {
+                        if (options.autoPagination && data.nextCursor && items.length < data.totalItems) {
                             await fetchItems(data.nextCursor);
                         }
                     }

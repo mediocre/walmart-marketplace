@@ -1,6 +1,6 @@
 # walmart-marketplace
 
-[![Build Status](https://github.com/mediocre/walmart-marketplace/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/mediocre/walmart-marketplace/actions/workflows/test.yml)
+[![Build Status](https://github.com/stores-com/walmart-marketplace/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/stores-com/walmart-marketplace/actions/workflows/test.yml)
 [![Coverage Status](https://coveralls.io/repos/github/mediocre/walmart-marketplace/badge.svg?branch=main)](https://coveralls.io/github/mediocre/walmart-marketplace?branch=main)
 
 

@@ -9,7 +9,7 @@
         "globals": "*"
     },
     "name": "@mediocre/walmart-marketplace",
-    "repository": "https://github.com/mediocre/walmart-marketplace",
+    "repository": "https://github.com/stores-com/walmart-marketplace",
     "scripts": {
         "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
         "test": "node --test"
